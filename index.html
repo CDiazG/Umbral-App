@@ -417,6 +417,13 @@ html.dk .dr-av{color:hsl(var(--h) 60% 74%)}
 @media(max-width:800px){.tbw{max-height:none!important}.dr-ed{top:54px;background:linear-gradient(var(--bls),var(--bls)),var(--sf);padding:8px 10px;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.12)}.dr-ed>span:first-child{font-size:12px;flex:1 1 100%}}
 #fmx .fmh{margin:0 0 10px}.ik{cursor:pointer;margin:10px 0}.ik-t{display:flex;justify-content:space-between;font-size:13px}.ik-m,.ik-u{margin:0 0 14px}.ik-u .av{margin:8px 0 0}.cd.lk{cursor:pointer}.cd.lk:hover{border-color:var(--bl)}.fmav>summary{cursor:pointer;padding:4px 0}
 .fm-nav{display:inline-flex;align-items:center;gap:6px;margin-left:auto}.fm-nav+.fm-mes{margin-left:10px}.fm-nav button{padding:2px 12px;min-height:30px;font-size:18px;line-height:1}.fm-nav small{color:var(--ink2);font-size:12px;min-width:48px;text-align:center}
+.mg .e{color:var(--ink)}.mg .has{cursor:pointer}#evcard{display:none;position:fixed;z-index:60;max-width:360px;min-width:240px;background:var(--sf);color:var(--ink);border:1px solid var(--ln2);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.22);padding:10px 12px;font-size:13px;line-height:1.4;pointer-events:none}.evc-h{font-weight:600;margin-bottom:6px}.evc-i{padding:5px 0;border-top:1px solid var(--ln)}.evc-i:first-of-type{border-top:0}
+.yg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;margin-top:12px}.ymh{background:none;border:0;font-weight:600;text-transform:capitalize;padding:2px 0;color:var(--ink);min-height:0}.ymh:hover:not(:disabled){background:none;color:var(--bl);text-decoration:underline}
+.mg.mini{gap:1px;margin-top:2px}.mg.mini div{min-height:0;padding:2px 0;text-align:center;border:0;border-radius:4px;font-size:11px}.mg.mini .w{font-size:10px}
+.dots{display:flex;gap:2px;justify-content:center;min-height:5px;font-style:normal}.dots b{width:5px;height:5px;border-radius:50%;display:inline-block}.dots .k-ipc{background:#00666b}.dots .k-renta{background:#a8620a}.dots .k-fin{background:#b3382c}.dots .k-tarea{background:#777}
+.qg{display:grid;grid-template-columns:44px repeat(12,minmax(0,1fr));gap:3px;margin-top:12px}.qh{text-align:center;font-size:11px;color:var(--ink2);text-transform:uppercase}.qy{font-weight:600;font-size:13px;display:flex;align-items:center}
+.qc{min-height:44px;border:1px solid var(--ln);border-radius:6px;text-align:center;font-size:12px;padding:3px 0;cursor:pointer;overflow:hidden}.qc:hover{border-color:var(--bl)}.qc.l1{background:color-mix(in srgb,var(--bl) 14%,transparent)}.qc.l2{background:color-mix(in srgb,var(--bl) 28%,transparent)}.qc.l3{background:color-mix(in srgb,var(--bl) 45%,transparent)}
+@media(max-width:600px){.qg{grid-template-columns:34px repeat(12,minmax(0,1fr));gap:2px}.qc{min-height:38px;font-size:11px}.qh{font-size:9px}}
 </style></head><body>
 <div id="portal"></div>
 <script>
@@ -707,8 +714,8 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=94,BUILD_D='29 oct 2026',VER='2.6.0',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=95,BUILD_D='29 oct 2026',VER='2.7.0',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -793,15 +800,49 @@ ${car0.length?`<p style="margin:-6px 0 14px;font-size:13px;color:var(--ink2)">�
 ${av.length?`<h2 style="font-size:16px;margin-top:18px">Datos por completar</h2>${av.map(m=>`<div class="ev"><span class="tx">⚠ ${e(m)}</span></div>`).join('')}`:''}`}
 /* Calendario */
 let CM=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);
-function cm_(n){CM=new Date(CM.getFullYear(),CM.getMonth()+n,1);rCal()}
-function rCal(){const ev=events(),first=CM.getDay()||7,nd=new Date(CM.getFullYear(),CM.getMonth()+1,0).getDate();let cells='';
+function cm_(n){CM=CV=='y'?new Date(CM.getFullYear()+n,CM.getMonth(),1):CV=='q'?new Date(CM.getFullYear()+5*n,CM.getMonth(),1):new Date(CM.getFullYear(),CM.getMonth()+n,1);rCal()}
+let CV=(()=>{try{return localStorage.getItem('fx_calv')||'m'}catch(x){return 'm'}})();
+const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function cv_(v){CV=v;try{localStorage.setItem('fx_calv',v)}catch(x){}rCal()}
+function cvGo(y,m){CM=new Date(y,m,1);cv_('m')}
+function cvHoy(){CM=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);rCal()}
+const evKinds=es=>[...new Set(es.map(x=>x.k))];
+const dotsH=es=>`<i class="dots">${evKinds(es).map(x=>`<b class="k-${x}"></b>`).join('')}</i>`;
+function monthCells(by){const first=CM.getDay()||7,nd=new Date(CM.getFullYear(),CM.getMonth()+1,0).getDate();let cells='';
 ['L','M','X','J','V','S','D'].forEach(w=>cells+=`<div class="w">${w}</div>`);for(let i=1;i<first;i++)cells+='<div class="w"></div>';
-for(let d=1;d<=nd;d++){const k=iso(new Date(CM.getFullYear(),CM.getMonth(),d)),es=ev.filter(x=>x.d==k);cells+=`<div class="${k==iso(TODAY)?'td':''}">${d}${es.slice(0,3).map(x=>`<span class="e k-${x.k}" title="${e(x.t)}">${e(x.t.split(':')[0].slice(0,18))}</span>`).join('')}${es.length>3?'<small>+'+(es.length-3)+'</small>':''}</div>`}
-const up=ev.filter(x=>days(x.d)>=-30);
-$('v-cal').innerHTML=`<h2>Calendario y alertas</h2><p>Actualizaciones de renta, vencimientos y tareas, según los contratos. Las alertas por correo y móvil siguen activas aparte.</p>
-<div class="mh"><div style="display:flex;justify-content:space-between;align-items:center"><button onclick="cm_(-1)">←</button><b>${MN[CM.getMonth()]} ${CM.getFullYear()}</b><button onclick="cm_(1)">→</button></div><div class="mg">${cells}</div></div>
+for(let d=1;d<=nd;d++){const k=iso(new Date(CM.getFullYear(),CM.getMonth(),d)),es=by[k]||[];cells+=`<div class="${k==iso(TODAY)?'td':''}${es.length?' has':''}"${es.length?` data-d="${k}"`:''}>${d}${es.slice(0,3).map(x=>`<span class="e k-${x.k}" title="${e(x.t)}">${e(x.t.split(':')[0].slice(0,18))}</span>`).join('')}${es.length>3?'<small>+'+(es.length-3)+'</small>':''}</div>`}
+return cells}
+function miniMonth(y,m,by){const first=new Date(y,m,1).getDay()||7,nd=new Date(y,m+1,0).getDate();let c=['L','M','X','J','V','S','D'].map(w=>`<div class="w">${w}</div>`).join('');for(let i=1;i<first;i++)c+='<div class="w"></div>';
+for(let d=1;d<=nd;d++){const k=iso(new Date(y,m,d)),es=by[k]||[];c+=`<div class="${k==iso(TODAY)?'td':''}${es.length?' has':''}"${es.length?` data-d="${k}"`:''}>${d}${es.length?dotsH(es):''}</div>`}
+return `<div class="ym"><button class="ymh" onclick="cvGo(${y},${m})" title="Abrir ${MN[m]} ${y}">${MN[m]}</button><div class="mg mini">${c}</div></div>`}
+function qView(Y,ev){const by={};ev.forEach(x=>{const k=x.d.slice(0,7);(by[k]=by[k]||[]).push(x)});
+let h='<div class="qg"><div></div>'+MS.map(m=>`<div class="qh">${m}</div>`).join('');
+for(let y=Y;y<Y+5;y++){h+=`<div class="qy">${y}</div>`;for(let m=0;m<12;m++){const k=y+'-'+String(m+1).padStart(2,'0'),es=by[k]||[],n=es.length,lv=!n?0:n<3?1:n<6?2:3;
+h+=n?`<div class="qc has l${lv}" data-m="${k}" onclick="cvGo(${y},${m})">${n}${dotsH(es)}</div>`:`<div class="qc" onclick="cvGo(${y},${m})"></div>`}}
+return h+'</div><p style="font-size:13px;color:var(--ink2)">El número es la cantidad de avisos de cada mes. Pasa el ratón para ver cuáles son y pulsa un mes para abrirlo.</p>'}
+function rCal(){const ev=events(),by={};ev.forEach(x=>(by[x.d]=by[x.d]||[]).push(x));window._CE=ev;ceHide();
+const Y=CM.getFullYear();let body,ttl;
+if(CV=='y'){ttl=String(Y);body=`<div class="yg">${[...Array(12).keys()].map(m=>miniMonth(Y,m,by)).join('')}</div>`}
+else if(CV=='q'){ttl=Y+' – '+(Y+4);body=qView(Y,ev)}
+else{ttl=MN[CM.getMonth()]+' '+Y;body=`<div class="mg">${monthCells(by)}</div>`}
+const up=ev.filter(x=>days(x.d)>=-30),vb=(v,t)=>`<button class="${CV==v?'p':''}" onclick="cv_('${v}')">${t}</button>`;
+$('v-cal').innerHTML=`<h2>Calendario y alertas</h2><p>Actualizaciones de renta, vencimientos y tareas, según los contratos. Pasa el ratón por un día para ver el texto completo de sus avisos. Las alertas por correo y móvil siguen activas aparte.</p>
+<div class="mh"><div class="g" style="margin:0 0 10px">${vb('m','Mes')}${vb('y','Año')}${vb('q','5 años')}<button onclick="cvHoy()">Hoy</button></div><div style="display:flex;justify-content:space-between;align-items:center"><button onclick="cm_(-1)" aria-label="Anterior">←</button><b style="text-transform:capitalize">${ttl}</b><button onclick="cm_(1)" aria-label="Siguiente">→</button></div>${body}</div>
 <h2 style="font-size:16px">Todos los avisos</h2>${up.map(evRow).join('')}
-<h2 style="font-size:16px;margin-top:18px">Añadir un aviso propio</h2><div class="nf"><div><label>Fecha</label><input type="date" id="ed_d"></div><div><label>Tipo</label><select id="ed_k"><option value="tarea">Tarea</option><option value="ipc">IPC</option><option value="renta">Renta</option><option value="fin">Contrato</option></select></div><div><label>Texto</label><input id="ed_t"></div></div><p><button class="p" onclick="addEv()">Añadir aviso</button></p>`}
+<h2 style="font-size:16px;margin-top:18px">Añadir un aviso propio</h2><div class="nf"><div><label>Fecha</label><input type="date" id="ed_d"></div><div><label>Tipo</label><select id="ed_k"><option value="tarea">Tarea</option><option value="ipc">IPC</option><option value="renta">Renta</option><option value="fin">Contrato</option></select></div><div><label>Texto</label><input id="ed_t"></div></div><p><button class="p" onclick="addEv()">Añadir aviso</button></p>`;ceInit()}
+/* Tarjeta con todo el texto de los avisos de un día o de un mes (al pasar el ratón; en el móvil, al pulsar un día) */
+function ceCard(c){let es,hd;const L={ipc:'IPC',renta:'Renta',fin:'Contrato',tarea:'Tarea'};
+if(c.dataset.d){const k=c.dataset.d;es=(window._CE||[]).filter(x=>x.d==k);hd=new Date(k+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+else{const k=c.dataset.m;es=(window._CE||[]).filter(x=>x.d.slice(0,7)==k).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);hd=MN[+k.slice(5)-1]+' '+k.slice(0,4)}
+if(!es.length)return;const mes=!!c.dataset.m,tot=es.length;if(es.length>12)es=es.slice(0,12);
+let w=document.getElementById('evcard');if(!w){w=document.createElement('div');w.id='evcard';document.body.appendChild(w)}
+hd=hd.charAt(0).toUpperCase()+hd.slice(1);w.innerHTML=`<div class="evc-h">${e(hd)}</div>`+es.map(x=>`<div class="evc-i"><span class="tg k-${x.k}">${L[x.k]||''}</span>${mes?'<b>'+e(fd(x.d))+'</b> · ':''}${e(x.t)}</div>`).join('')+(tot>12?`<div class="evc-i"><small>… y ${tot-12} más. Pulsa el mes para verlos.</small></div>`:'');
+w.style.display='block';const r=c.getBoundingClientRect(),ww=w.offsetWidth,hh=w.offsetHeight;let l=Math.min(Math.max(8,r.left+r.width/2-ww/2),innerWidth-ww-8),t=r.bottom+6;if(t+hh>innerHeight-8)t=Math.max(8,r.top-hh-6);w.style.left=l+'px';w.style.top=t+'px'}
+function ceHide(){const c=document.getElementById('evcard');if(c)c.style.display='none'}
+function ceInit(){const v=$('v-cal');if(!v)return;
+v.onpointerover=q=>{if(q.pointerType!=='mouse')return;const c=q.target.closest('[data-d],[data-m]');if(c&&v.contains(c))ceCard(c);else ceHide()};v.onpointerleave=q=>{if(q.pointerType==='mouse')ceHide()};
+v.onclick=q=>{const c=q.target.closest('[data-d]');if(c&&v.contains(c))ceCard(c);else if(!q.target.closest('[data-m]'))ceHide()};
+if(!window._ceH){window._ceH=1;document.addEventListener('click',q=>{if(!q.target.closest('#v-cal'))ceHide()});window.addEventListener('scroll',ceHide,true)}}
 function addEv(){const d=$('ed_d').value,t=$('ed_t').value.trim();if(!d||!t){alert('Pon una fecha y un texto.');return}
 let a=[];try{a=JSON.parse(LSX.getItem('fl_ev'))||[]}catch(x){}a.push({d,k:$('ed_k').value,t});try{LSX.setItem('fl_ev',JSON.stringify(a))}catch(x){}rCal()}
 /* Inquilinos */
