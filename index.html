@@ -731,8 +731,8 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=101,BUILD_D='30 oct 2026',VER='2.10.2',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=102,BUILD_D='30 oct 2026',VER='2.10.3',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -1844,6 +1844,7 @@ if(h.ts===lts){CL.ts=lts;CL.state='on';if(dirty)clMark('x')}
 else if(h.ts>lts){if(!clHas()||(lts&&!dirty)||(!dirty&&clSub(h))){CL.state='on';await clPull()}else{CL.state='conf';clUi();clAsk()}}
 else{CL.state='on';CL.ts=lts;await clPush()}}
 else{CL.state='on';if(clHas())await clPush()}
+if(window.__fullBase&&CL.state==='on'&&!CL.busy){const o=CL.hdr&&CL.hdr.k&&CL.hdr.k.fl_base,v=LSX.getItem('fl_base')||'';if(v&&(!o||o.h!==clHash(v)))await clPush()}
 clCos();
 CL.un=CL.db.doc('cloud/'+CO).onSnapshot(sn=>{if(!sn.exists)return;const h=sn.data();if(!h||h.by===CL.by)return;CL.rh=h;CL.rts=Math.max(CL.rts,h.ts);if(h.ts<=(+LSX.getItem('fl_synct')||0))return;if(CL.applying||CL.busy||CL.state!=='on')return;CL.state=LSX.getItem('fl_syncd')==='1'?'conf':'newer';clUi()},x=>{});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&LSX.getItem('fl_syncd')==='1'&&CL.state==='on'&&!CL.busy)clPush()});
