@@ -413,6 +413,7 @@ html.dk .dr-av{color:hsl(var(--h) 60% 74%)}
 .fm .t{text-align:right;white-space:normal;overflow:visible;margin-top:10px;flex:none}.fm-g{position:sticky;bottom:0;background:var(--sf);padding-top:8px}
 .fd{border:1px solid var(--ln);border-radius:12px;padding:0 14px;margin:0 0 12px;background:var(--sf)}.fd>summary{cursor:pointer;padding:12px 0;font-weight:600}.fd>summary small{font-weight:400;color:var(--ink2);margin-left:6px}.fd .fdi{padding-bottom:14px}
 @media(max-width:800px){body.fone #hd{display:none!important}#v-fac.one>div:first-child{display:none}.fm-back{display:inline-flex}.fm-g{bottom:60px;z-index:5}.fm .x4{grid-template-columns:1fr 92px 60px 34px}}
+@media(max-width:800px){.tbw{max-height:none!important}.dr-ed{top:54px;background:linear-gradient(var(--bls),var(--bls)),var(--sf);padding:8px 10px;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.12)}.dr-ed>span:first-child{font-size:12px;flex:1 1 100%}}
 #fmx .fmh{margin:0 0 10px}.fmav>summary{cursor:pointer;padding:4px 0}
 </style></head><body>
 <div id="portal"></div>
@@ -668,7 +669,7 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=79,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
+const BUILD=80,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+BUILD:'En línea · v'+BUILD;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -1077,7 +1078,9 @@ $('v-exp').innerHTML=`<h2>Exportar datos</h2><p>Una tabla completa con todos los
 <p><button class="p" onclick="expXlsx()">Descargar Excel completo</button></p>
 <p style="color:#47676a">Los datos de contrato salen de la lectura OCR; donde pone «${SD}» no se pudo leer. Contrasta con el original antes de actuar.</p>
 <div class="tbw"><table class="tb" style="min-width:1100px"><tr>${cols.map(i=>`<th>${e(X.H1[i])}</th>`).join('')}</tr>${X.A.map(r=>`<tr>${cols.map(i=>`<td>${e(String(r[i]))}</td>`).join('')}</tr>`).join('')}</table></div>`}
-function cdHtml(t){const c=cdOf(t);return`<dl style="margin:8px 0 0;display:grid;grid-template-columns:150px 1fr;gap:2px 10px;font-size:13px"><dt>Inicio</dt><dd>${e(c[0])}</dd><dt>Fin</dt><dd>${e(c[1])}</dd><dt>Actualización de renta</dt><dd>${e(c[2])}</dd><dt>IBI</dt><dd>${e(c[3])}</dd><dt>Comunidad</dt><dd>${e(c[4])}</dd><dt>Basuras / otros</dt><dd>${e(c[5])}</dd>${c[6]?`<dt>Notas</dt><dd>${e(c[6])}</dd>`:''}</dl>`}
+function cdProg(c){try{const dv=x=>(x==SD||!x)?'':x,ini=tpFecha(dv(c[0])),fin=tpFecha(dv(c[1])),ahora=iso(TODAY);if(!(ini&&fin&&fin>ini))return'';const tt=tpDd(ini,fin),pc=Math.max(0,Math.min(100,tpDd(ini,ahora)/tt*100)),rest=tpDd(ahora,fin),txt=rest<0?'Contrato vencido hace '+Math.round(-rest/30)+' meses':rest<60?'Termina en '+rest+' días':rest<700?'Quedan '+Math.round(rest/30.4)+' meses':'Quedan '+(rest/365).toFixed(1).replace('.',',')+' años';
+return`<div class="tp-pr" title="${Math.round(pc)} % del contrato transcurrido"><i style="width:${pc.toFixed(1)}%"></i></div><div class="tp-prl"><span>${fd(ini)}</span><b>${txt}</b><span>${fd(fin)}</span></div>`}catch(x){return''}}
+function cdHtml(t){const c=cdOf(t);return cdProg(c)+`<dl style="margin:8px 0 0;display:grid;grid-template-columns:150px 1fr;gap:2px 10px;font-size:13px"><dt>Inicio</dt><dd>${e(c[0])}</dd><dt>Fin</dt><dd>${e(c[1])}</dd><dt>Actualización de renta</dt><dd>${e(c[2])}</dd><dt>IBI</dt><dd>${e(c[3])}</dd><dt>Comunidad</dt><dd>${e(c[4])}</dd><dt>Basuras / otros</dt><dd>${e(c[5])}</dd>${c[6]?`<dt>Notas</dt><dd>${e(c[6])}</dd>`:''}</dl>`}
 /* ===== Factura especial ===== */
 let ES={i:0,lines:[['',0]],date:'',no:'',txt:'',sp:true,sig:false,m:false};
 function esSug(){const t=T[ES.i],L=serL(t.no)||(siglas(t.n,t.k).free[0]||'X'),y=ES.date.slice(0,4);let n=0;const re=new RegExp('^'+L+'\\.'+y+'(\\d{2})$');[...T.map(x=>x.no),...Object.values(H).map(h=>h.no)].forEach(no=>{const m=String(no).match(re);if(m)n=Math.max(n,+m[1])});return L+'.'+y+String(n+1).padStart(2,'0')}
