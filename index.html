@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script>/*max*/(function(){try{if(location.protocol==='file:'&&(outerWidth<screen.availWidth-40||outerHeight<screen.availHeight-40)){moveTo(0,0);resizeTo(screen.availWidth,screen.availHeight)}}catch(e){}})()</script>
 <script>(function(){var mq=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)");function ap(){var t="auto";try{t=localStorage.getItem("fx_tema")||"auto"}catch(e){}if(t!=="claro"&&t!=="oscuro")t="auto";window.__tema=t;document.documentElement.classList.toggle("dk",t==="oscuro"||(t==="auto"&&!!mq&&mq.matches))}window.setTema=function(t){try{localStorage.setItem("fx_tema",t)}catch(e){}ap();if(window.buildMenu)try{buildMenu()}catch(e){}};ap();if(mq&&mq.addEventListener)mq.addEventListener("change",ap)})();</script>
 <title>Gestión de alquileres - Umbral</title><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#36719F"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Umbral"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -652,7 +651,7 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>rGen(),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=71,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
+const BUILD=72,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+BUILD:'En línea · v'+BUILD;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
