@@ -413,6 +413,7 @@ html.dk .dr-av{color:hsl(var(--h) 60% 74%)}
 .fm .t{text-align:right;white-space:normal;overflow:visible;margin-top:10px;flex:none}.fm-g{position:sticky;bottom:0;background:var(--sf);padding-top:8px}
 .fd{border:1px solid var(--ln);border-radius:12px;padding:0 14px;margin:0 0 12px;background:var(--sf)}.fd>summary{cursor:pointer;padding:12px 0;font-weight:600}.fd>summary small{font-weight:400;color:var(--ink2);margin-left:6px}.fd .fdi{padding-bottom:14px}
 @media(max-width:800px){body.fone #hd{display:none!important}#v-fac.one>div:first-child{display:none}.fm-back{display:inline-flex}.fm-g{bottom:60px;z-index:5}.fm .x4{grid-template-columns:1fr 92px 60px 34px}}
+#fmx .fmh{margin:0 0 10px}.fmav>summary{cursor:pointer;padding:4px 0}
 </style></head><body>
 <div id="portal"></div>
 <script>
@@ -473,7 +474,7 @@ var id2=cos[j].id,ks=[];for(var q=0;q<localStorage.length;q++){var k=localStorag
 <button onclick="clr(this)">Quitar gastos puntuales</button>
 <button class="p" onclick="all_()">PDF de las marcadas (un solo archivo)</button>
 </header>
-<main id="v-fac"><div><input id="lq" type="search" placeholder="Buscar local o inquilino (ej. gc 41, jativa 17, turrón, oftalvist)" autocomplete="off" style="width:100%;box-sizing:border-box;margin-bottom:8px" oninput="LQ=this.value;window.list()" onkeydown="if(event.key==='Enter')lqGo()"><div id="lqi" style="font-size:12px;color:#47676a;margin:-2px 0 6px"></div><div id="list"></div></div><div id="ed"></div><div id="lv"></div></main>
+<main id="v-fac"><div><div id="fmx"></div><input id="lq" type="search" placeholder="Buscar local o inquilino (ej. gc 41, jativa 17, turrón, oftalvist)" autocomplete="off" style="width:100%;box-sizing:border-box;margin-bottom:8px" oninput="LQ=this.value;window.list()" onkeydown="if(event.key==='Enter')lqGo()"><div id="lqi" style="font-size:12px;color:#47676a;margin:-2px 0 6px"></div><div id="list"></div></div><div id="ed"></div><div id="lv"></div></main>
 <section class="v" id="v-ini" hidden></section>
 <section class="v" id="v-cal" hidden></section>
 <section class="v" id="v-inq" hidden></section>
@@ -555,7 +556,7 @@ return L+'.'+yy+String(n).padStart(2,'0')}
 function shiftNo(no,d){const m=String(no).match(/^(.*?)(\d{4})(\d{2})$/);if(!m||+m[3]<1||+m[3]>12)return no;const i=+m[2]*12+ +m[3]-1+d;return m[1]+Math.floor(i/12)+String(i%12+1).padStart(2,'0')}
 const isRec=x=>x[2]===true||/\d+\/15\b/.test(x[0]);
 function dt(){const c=+$('y').value*12+ +$('m').value;
-if(PYM!==null&&c!==PYM){const d=c-PYM;T.forEach(t=>{t.no=stepNo(t,PYM,c);t.x.forEach(x=>{if(isRec(x))x[0]=x[0].replace(/(\d+)\/(\d+)/,(a,n,tot)=>Math.max(1,Math.min(+n+d,+tot))+'/'+tot)})});save();if(CUR=='fac'){list();ed()}}
+if(PYM!==null&&c!==PYM){const d=c-PYM;T.forEach(t=>{t.no=stepNo(t,PYM,c);t.x.forEach(x=>{if(isRec(x))x[0]=x[0].replace(/(\d+)\/(\d+)/,(a,n,tot)=>Math.max(1,Math.min(+n+d,+tot))+'/'+tot)})});save();if(CUR=='fac'){list();ed();fmPanel()}}
 PYM=c;try{LSX.setItem('fl_my',JSON.stringify({m:$('m').value,y:$('y').value}))}catch(x){}
 $('d').value=$('y').value+'-'+String(+$('m').value+1).padStart(2,'0')+'-01'}dt();
 const BKN=EMP.bk.length?EMP.bk.map(x=>x[0]):['Cuenta'];
@@ -661,13 +662,13 @@ async function allGo(s0){const s=(Array.isArray(s0)?s0:T.filter(inc)).filter(t=>
 list();ed();
 /* ===== Menú y vistas ===== */
 /* MENÚ: cada grupo es [nombre, [[id, título], ...]]. Para añadir una vista propia: crea su función rXxx() que pinte en $('v-xxx'), añade su <section id="v-xxx"> y una entrada aquí y en VIEWS. También se pueden crear apartados sencillos desde Copia de seguridad y apartados. */
-const MENU=[['',[['ini','Inicio']]],['Facturación',[['gen','Generación dinámica'],['fac','Facturas'],['esp','Factura especial'],['cob','Cobros e historial'],['ema','Correos'],['res','Resumen anual']]],['Alquileres',[['loc','Locales'],['inq','Inquilinos'],['con','Contratos'],['exp','Exportar datos'],['nue','Nuevo local']]],['Control',[['cal','Calendario y alertas'],['ale','Alertas de datos'],['gra','Gráficos y economía'],['pen','Puntos a revisar'],['ipc','IPC y rentas'],['map','Mapa de locales']]],['Sistema',[['emp','Datos de la empresa'],['reg','Registro de cambios'],['aju','Copia de seguridad y apartados']]]];
+const MENU=[['',[['ini','Inicio']]],['Facturación',[['fac','Facturas del mes'],['cob','Cobros e historial'],['ema','Correos'],['res','Resumen anual']]],['Alquileres',[['loc','Locales'],['inq','Inquilinos'],['con','Contratos'],['exp','Exportar datos'],['nue','Nuevo local']]],['Control',[['cal','Calendario y alertas'],['ale','Alertas de datos'],['gra','Gráficos y economía'],['pen','Puntos a revisar'],['ipc','IPC y rentas']]],['Sistema',[['emp','Datos de la empresa'],['reg','Registro de cambios'],['aju','Copia de seguridad y apartados']]]];
 let CP=[];try{CP=JSON.parse(LSX.getItem('fl_cp'))||[]}catch(x){}
 const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
-const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>rGen(),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed()}};
+const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=78,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
+const BUILD=79,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+BUILD:'En línea · v'+BUILD;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -1005,17 +1006,17 @@ const pm=act.filter(payWarn);if(pm.length)add('w','<b>Cuenta distinta a la del c
 const evs=events().filter(x=>x.k!='tarea'&&x.d.slice(0,7)==kn(y,m+1));if(evs.length)add('i','<b>Fechas de este mes</b>: '+evs.slice(0,6).map(x=>fd(x.d)+' '+e(x.t)).join(' · '));
 return A}
 function gAv(){const el=$('g_av');if(!el)return;const A=avisos(),w=A.filter(x=>x[0]=='w').length;
-el.innerHTML=`<div class="mh"><b>Avisos de ${MES[+$('m').value].toLowerCase()} de ${$('y').value}</b> <small style="color:#47676a">· ${w?w+' importantes':'sin avisos importantes'}</small>${A.length?A.map(x=>`<div class="av ${x[0]}">${x[0]=='w'?'⚠️':'ℹ️'} ${x[1]}</div>`).join(''):'<p style="margin:6px 0 0">Nada que avisar este mes.</p>'}</div>`}
+el.innerHTML=`<details class="fmav"><summary><b>Avisos de ${MES[+$('m').value].toLowerCase()}</b> <small style="color:#47676a">· ${w?'⚠️ '+w+' importantes':A.length?A.length+' informativos':'sin avisos'}</small></summary>${A.length?A.map(x=>`<div class="av ${x[0]}">${x[0]=='w'?'⚠️':'ℹ️'} ${x[1]}</div>`).join(''):'<p style="margin:6px 0 0">Nada que avisar este mes.</p>'}</details>`}
 let GS={sel:null,amt:{},rec:false};
 function gAct(){return T.map((t,i)=>i).filter(i=>inc(T[i]))}
 function gm(){$('m').value=$('g_m').value;$('y').value=$('g_y').value;dt();rGen()}
-function gPuntuales(b){if(b.dataset.s!='1'){b.dataset.s='1';b.textContent='¿Seguro? Pulsa otra vez';return}T.forEach(t=>t.x=t.x.filter(isRec));save();rGen()}
-function gAll(v){GS.sel=v?gAct():[];document.querySelectorAll('#v-gen input[data-gs]').forEach(c=>c.checked=v)}
+function gPuntuales(b){if(b.dataset.s!='1'){b.dataset.s='1';b.textContent='¿Seguro? Pulsa otra vez';return}T.forEach(t=>t.x=t.x.filter(isRec));save();if($('g_x'))rGen();else{list();if(S.sel!=null&&T[S.sel])ed();fmPanel()}}
+function gAll(v){GS.sel=v?gAct():[];document.querySelectorAll('input[data-gs]').forEach(c=>c.checked=v)}
 function gTog(i,v){if(GS.sel===null)GS.sel=gAct();GS.sel=v?[...new Set([...GS.sel,i])]:GS.sel.filter(k=>k!=i);}
 function gAdd(){const c=($('g_c').value=='OTRO'?$('g_o').value:$('g_c').value).trim(),com=parseFloat(String($('g_a').value).replace(',','.')),sel=GS.sel===null?gAct():GS.sel;
 if(!c){alert('Elige o escribe el concepto del gasto.');return}let n=0;
 sel.forEach(i=>{const own=parseFloat(String(GS.amt[i]||'').replace(',','.')),v=!isNaN(own)?own:com;if(isNaN(v))return;T[i].x.push([c,r2(v),$('g_r').checked]);n++});
-GS.amt={};document.querySelectorAll('#v-gen input[data-ga]').forEach(c=>c.value='');save();$('g_msg').textContent=n?'Añadido a '+n+' facturas.':'No se ha añadido nada: falta el importe.';rGen2()}
+GS.amt={};document.querySelectorAll('input[data-ga]').forEach(c=>c.value='');save();$('g_msg').textContent=n?'Añadido a '+n+' facturas.':'No se ha añadido nada: falta el importe.';if($('g_x'))rGen2();else{list();if(S.sel!=null&&T[S.sel])ed()}}
 function rGen(){const a=gAct(),yrs=[+$('y').value-1,+$('y').value,+$('y').value+1];if(GS.sel===null)GS.sel=a.slice();
 $('v-gen').innerHTML=`<h2>Generación dinámica de facturas</h2><p>Elige el mes, indica los gastos y revisa las facturas. Todo se puede retocar luego en la pestaña Facturas.</p>
 <div id="g_av"></div><div class="mh"><b>1. Mes de las facturas</b><div class="nf" style="border:0;padding:6px 0"><div><label>Mes</label><select id="g_m" onchange="gm()">${MN.map((m,i)=>`<option value="${i}" ${i==+$('m').value?'selected':''}>${m}</option>`).join('')}</select></div><div><label>Año</label><select id="g_y" onchange="gm()">${yrs.map(y=>`<option ${y==+$('y').value?'selected':''}>${y}</option>`).join('')}</select></div></div>
@@ -1028,10 +1029,21 @@ $('v-gen').innerHTML=`<h2>Generación dinámica de facturas</h2><p>Elige el mes,
 <div class="tbw"><table class="tb" style="min-width:420px"><tr><th></th><th>Local</th><th>Importe propio</th></tr>${a.map(i=>`<tr><td><input type="checkbox" data-gs="1" style="width:auto" ${GS.sel.includes(i)?'checked':''} onchange="gTog(${i},this.checked)"></td><td>${e(T[i].n)} <small>(${e(locOf(T[i]))})</small></td><td><input data-ga="1" inputmode="decimal" style="width:110px" value="${e(GS.amt[i]||'')}" oninput="GS.amt[${i}]=this.value"></td></tr>`).join('')}</table></div>
 <p><button class="p" onclick="gAdd()">Añadir a las facturas marcadas</button> <span id="g_msg" class="ok"></span></p></div>
 <div id="g_x"></div><div id="g_f"></div>`;rGen2()}
+
+/*FM*/GS.open=GS.open||0;
+function fmG(){GS.open=GS.open?0:1;fmPanel()}
+function fmPanel(){const el=$('fmx');if(!el)return;const a=gAct();if(GS.sel===null)GS.sel=a.slice();
+let h=`<div class="mh fmh"><div id="g_av"></div><div class="g" style="margin:8px 0 0"><button class="p" onclick="show('esp')">+ Factura especial</button><button onclick="fmG()">${GS.open?'Cerrar gastos ▴':'Gasto para varios locales ▾'}</button><button onclick="gPuntuales(this)">Quitar gastos puntuales</button><button onclick="all_()">PDF de las marcadas</button></div>`;
+if(GS.open)h+=`<div style="margin-top:10px"><div class="nf" style="border:0;padding:6px 0"><div><label>Concepto</label><select id="g_c" onchange="$('g_ow').hidden=this.value!='OTRO'"><option>IBI</option><option>COMUNIDAD DE PROPIETARIOS</option><option>TASA DE BASURAS</option><option>OCA ASCENSORES</option><option value="OTRO">Otro…</option></select></div><div id="g_ow" hidden><label>Escribe el concepto</label><input id="g_o"></div><div><label>Importe común (€, sin IVA)</label><input id="g_a" inputmode="decimal"></div><div><label><input type="checkbox" id="g_r" style="width:auto" ${GS.rec?'checked':''} onchange="GS.rec=this.checked"> Se repite cada mes</label></div></div>
+<small style="color:#47676a">Marca los locales a los que se aplica. Si un local lleva otro importe, escríbelo en su casilla; si la dejas vacía se usa el común.</small>
+<div class="g" style="margin:8px 0"><button onclick="gAll(true)">Marcar todos</button><button onclick="gAll(false)">Quitar todos</button></div>
+<div class="tbw"><table class="tb" style="min-width:300px"><tr><th></th><th>Local</th><th>Importe propio</th></tr>${a.map(i=>`<tr><td><input type="checkbox" data-gs="1" style="width:auto" ${GS.sel.includes(i)?'checked':''} onchange="gTog(${i},this.checked)"></td><td>${e(T[i].n)} <small>(${e(locOf(T[i]))})</small></td><td><input data-ga="1" inputmode="decimal" style="width:90px" value="${e(GS.amt[i]||'')}" oninput="GS.amt[${i}]=this.value"></td></tr>`).join('')}</table></div>
+<p style="margin:8px 0 0"><button class="p" onclick="gAdd()">Añadir a los marcados</button> <span id="g_msg" class="ok"></span></p></div>`;
+el.innerHTML=h+'</div>';gAv()}
 function rGen2(){GS.rec=$('g_r')?$('g_r').checked:GS.rec;
 const rows=[];gAct().forEach(i=>T[i].x.forEach((x,j)=>rows.push([i,j,x])));
 $('g_x').innerHTML=`<div class="mh"><b>3. Gastos añadidos este mes</b>${rows.length?`<div class="tbw" style="margin-top:8px"><table class="tb" style="min-width:640px"><tr><th>Local</th><th>Concepto</th><th>Importe €</th><th>Repite</th><th></th></tr>${rows.map(([i,j,x])=>`<tr data-lk="x${i}_${j}"><td>${e(T[i].n)}</td><td><input value="${e(x[0])}" oninput="T[${i}].x[${j}][0]=this.value;save()"></td><td><input type="number" step=".01" style="width:110px" value="${x[1]}" oninput="T[${i}].x[${j}][1]=+this.value;save();gTot()"></td><td><input type="checkbox" style="width:auto" ${isRec(x)?'checked':''} onchange="T[${i}].x[${j}][2]=this.checked;save()"></td><td><button onclick="T[${i}].x.splice(${j},1);save();rGen2()">Quitar</button></td></tr>`).join('')}</table></div>`:'<p style="margin:6px 0 0">Todavía no hay gastos añadidos.</p>'}</div>`;gTot()}
-function gTot(){gAv();const a=gAct(),sum=a.reduce((s,i)=>s+calc(T[i]).tot,0);
+function gTot(){gAv();if(!$('g_f'))return;const a=gAct(),sum=a.reduce((s,i)=>s+calc(T[i]).tot,0);
 $('g_f').innerHTML=`<div class="mh"><b>4. Facturas de ${MES[+$('m').value].toLowerCase()} de ${$('y').value}</b><div class="tbw" style="margin-top:8px"><table class="tb" style="min-width:640px"><tr><th>Nº</th><th>Cliente</th><th>Base</th><th>Total</th><th></th></tr>${a.map(i=>{const c=calc(T[i]);return`<tr data-lk="g${i}"><td><input data-v="no" value="${e(T[i].no)}" style="width:130px" oninput="T[${i}].no=this.value;save()"></td><td>${e(T[i].n)}</td><td>${f(c.base)}</td><td><b>${f(c.tot)}</b></td><td><button onclick="pvw(${i})">Ver</button> <button onclick="S.sel=${i};show('fac')">Editar</button></td></tr>`}).join('')}<tr><td></td><td><b>Suma</b></td><td></td><td><b>${f(sum)}</b></td><td></td></tr></table></div>
 <p style="margin:10px 0 0"><button class="p" onclick="all_()">Descargar todas las facturas (un solo PDF)</button></p></div>`}
 
