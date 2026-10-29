@@ -707,8 +707,8 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=93,BUILD_D='29 oct 2026',VER='2.5.1',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=94,BUILD_D='29 oct 2026',VER='2.6.0',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -888,7 +888,7 @@ S.sel=0;save();buildMenu();$('am').textContent='Copia cargada: '+T.length+' loca
 /* ===== Historial, cobros, alertas, IPC, correos, resumen ===== */
 const sh=()=>{try{LSX.setItem('fl_h',JSON.stringify(H))}catch(x){}};
 const YM=()=>$('y').value+String(+$('m').value+1).padStart(2,'0');
-function reg(t){const c=calc(t),k=YM()+'|'+t.k,o=H[k]||{};H[k]={ym:YM(),k:t.k,no:t.no,n:t.n,base:c.base,iva:c.iva,irpf:c.irpf,tot:c.tot,b:t.b,env:!!o.env,cob:!!o.cob,fc:o.fc||'',gen:o.gen||iso(TODAY)};sh()}
+function reg(t){const c=calc(t),k=YM()+'|'+t.k,o=H[k]||{};H[k]={ym:YM(),k:t.k,no:t.no,n:t.n,base:c.base,iva:c.iva,irpf:c.irpf,tot:c.tot,b:t.b,env:!!o.env,fe:o.fe||'',cob:!!o.cob,fc:o.fc||'',gen:o.gen||iso(TODAY)};sh()}
 const pend=()=>Object.values(H).filter(h=>!h.cob).reduce((a,h)=>a+h.tot,0);
 const ymL=y=>MN[+y.slice(4)-1]+' '+y.slice(0,4);
 const EM=BASE.EM||{};
@@ -938,7 +938,7 @@ function rEma(){const mes=MES[+$('m').value].toLowerCase(),a=+$('y').value;
 $('v-ema').innerHTML=`<h2>Correos</h2><p>Un texto listo para cada inquilino. Descarga antes su PDF en Facturas y adjúntalo. Si falta un correo, escríbelo aquí o en Inquilinos.</p>
 <p style="font-size:13px">«Abrir en Gmail» crea el borrador en Gmail (en el navegador). Si usas varias cuentas de Google, escribe aquí la que envía las facturas: <input id="gm_u" type="email" placeholder="cuenta de Gmail (opcional)" value="${e(GMU())}" style="width:260px;max-width:100%" oninput="try{localStorage.setItem('fx_gmail',this.value.trim())}catch(x){}"></p>
 ${T.filter(inc).map(t=>{const i=T.indexOf(t),asu='Factura '+t.no+' - alquiler '+mes+' '+a;
-return `<div class="fi"><h3>${e(t.n)}</h3><div style="display:grid;gap:6px"><input placeholder="Correo del inquilino" value="${e(em(t))}" oninput="T[${i}].em=this.value;save()"><input readonly value="${e(asu)}"><textarea readonly rows="5">${e(cuerpo(t,mes,a))}</textarea><div class="g" style="margin:0"><button onclick="cp(${i},0)">Copiar texto</button><button onclick="cp(${i},1)">Copiar correo</button><button onclick="S.sel=${i};one()">Descargar su PDF</button><button class="p" onclick="gmOpen(${i})">Abrir en Gmail</button><a href="${mailto(t,mes,a)}"><button>Abrir con el programa de correo</button></a></div></div></div>`}).join('')}`}
+return `<div class="fi"><h3>${e(t.n)} <small style="font-weight:400;margin-left:8px">${envTxt(t)}</small></h3><div style="display:grid;gap:6px"><input placeholder="Correo del inquilino" value="${e(em(t))}" oninput="T[${i}].em=this.value;save()"><input readonly value="${e(asu)}"><textarea readonly rows="5">${e(cuerpo(t,mes,a))}</textarea><div class="g" style="margin:0"><button onclick="cp(${i},0)">Copiar texto</button><button onclick="cp(${i},1)">Copiar correo</button><button onclick="S.sel=${i};one()">Descargar su PDF</button><button class="p" onclick="gmOpen(${i})">Abrir en Gmail</button><a href="${mailto(t,mes,a)}" onclick="envAsk(${i})"><button>Abrir con el programa de correo</button></a>${gen1(t)?`<button onclick="envSet(${i},${!gen1(t).env})">${gen1(t).env?'Quitar «enviada»':'Marcar como enviada'}</button>`:''}</div></div></div>`}).join('')}`}
 function cp(i,w){const t=T[i],tx=w?em(t):cuerpo(t,MES[+$('m').value].toLowerCase(),+$('y').value);
 try{navigator.clipboard.writeText(tx).catch(()=>alert('No se pudo copiar. Selecciona el texto a mano.'))}catch(x){alert('No se pudo copiar. Selecciona el texto a mano.')}}
 let RY=String(TODAY.getFullYear());
@@ -1442,7 +1442,10 @@ return`<div class="mh"><b>Pendiente por inquilino</b>${old?` <span class="wn">·
 /* ===== Correos: borrador ===== */
 const GMU=()=>{try{return localStorage.getItem('fx_gmail')||''}catch(x){return ''}};
 function gmailUrl(t,mes,a){const u=GMU();return 'https://mail.google.com/mail/?view=cm&fs=1&tf=1'+(u?'&authuser='+encodeURIComponent(u):'')+'&to='+encodeURIComponent(String(em(t)||'').replace(/;/g,','))+'&su='+encodeURIComponent('Factura '+t.no+' - alquiler '+mes+' '+a)+'&body='+encodeURIComponent(cuerpo(t,mes,a))}
-function gmOpen(i){const w=window.open(gmailUrl(T[i],MES[+$('m').value].toLowerCase(),+$('y').value),'_blank','noopener');if(!w)alert('El navegador ha bloqueado la ventana de Gmail. Permite las ventanas emergentes para esta página e inténtalo de nuevo.')}
+function envTxt(t){const h=gen1(t);if(!h)return'<span class="wn2">Factura sin generar: descarga antes su PDF</span>';return h.env?'<b class="ok">✔ Enviada'+(h.fe?' el '+fd(h.fe):'')+'</b>':'<b class="wn2">Sin enviar</b>'}
+function envSet(i,v){const h=gen1(T[i]);if(!h)return;h.env=!!v;if(v)h.fe=iso(TODAY);else delete h.fe;sh();try{rEma()}catch(x){}}
+function envAsk(i){const t=T[i],h=gen1(t);if(!h||h.env)return;setTimeout(()=>{const m=fxModal('enm',`<h3 style="margin:0 0 6px">¿Has enviado ya el correo?</h3><p style="margin:0 0 12px">Factura ${e(t.no)} · ${e(t.n)}<br>Cuando lo hayas enviado desde Gmail, márcala aquí para llevar la cuenta.</p><div class="g" style="justify-content:flex-end"><button onclick="document.getElementById('enm').remove()">Todavía no</button><button class="p" onclick="envSet(${i},true);document.getElementById('enm').remove()">Sí, ya enviada</button></div>`,440)},400)}
+function gmOpen(i){const w=window.open(gmailUrl(T[i],MES[+$('m').value].toLowerCase(),+$('y').value),'_blank','noopener');if(!w){alert('El navegador ha bloqueado la ventana de Gmail. Permite las ventanas emergentes para esta página e inténtalo de nuevo.');return}envAsk(i)}
 function mailto(t,mes,a){return'mailto:'+encodeURIComponent(em(t)).replace(/%40/g,'@').replace(/%3B/g,',')+'?subject='+encodeURIComponent('Factura '+t.no+' - alquiler '+mes+' '+a)+'&body='+encodeURIComponent(cuerpo(t,mes,a))}
 /* ===== Registro de cambios ===== */
 let CHG=lsg('fl_chg')||[];const schg=()=>{try{LSX.setItem('fl_chg',JSON.stringify(CHG.slice(-600)))}catch(x){}};
