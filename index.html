@@ -405,6 +405,7 @@ html.dk .dr-av{color:hsl(var(--h) 60% 74%)}
 .dr-form>p,.dr-form>.tbw~*{display:none}
 </style><style id="fc-css">
 .fm{margin:0 0 12px}
+.pst{margin-top:12px;display:grid;gap:3px;font-size:12px;color:var(--ink2);text-align:center}
 .tm{box-sizing:border-box;max-width:100%;width:100%}.tm button{min-width:0!important;padding-left:2px!important;padding-right:2px!important;white-space:nowrap}.foot{box-sizing:border-box;max-width:100%}
 .fm-bar{display:flex;align-items:center;justify-content:space-between;gap:8px}.fm-back{display:none;font-weight:600}.fm-mes{margin-left:auto;font-size:12px;color:var(--ink2);text-transform:capitalize}
 .fm-sub{font-size:12px;color:var(--ink2);margin:2px 0 6px}.fm-r{font-size:13px;margin:0 0 4px}
@@ -430,7 +431,21 @@ function saveCos(){try{localStorage.setItem('fx_cos',JSON.stringify(cos))}catch(
 function enter(id){try{sessionStorage.setItem('fx_co',id)}catch(e){}window.name='fx:'+id;location.reload()}
 function cnt(id){try{var a=JSON.parse(localStorage.getItem((id==='main'?'':id+'_')+'fl2'));if(Array.isArray(a))return a.length+' locales'}catch(e){}return id==='main'?'Datos iniciales':'Sin datos todavía'}
 var armed=null;
-function render(){P.innerHTML='<div class="pp">'+LOGO+'<h1>Umbral</h1><p>Gestión de alquileres · elige la empresa</p>'+cos.map(function(c,i){return'<div class="pco"><button class="en" data-en="'+esc(c.id)+'"><b>'+esc(c.n)+'</b><small>'+esc(cnt(c.id))+'</small></button><button class="ac" data-rn="'+i+'" title="Cambiar nombre">✏️</button>'+(c.id==='main'?'':'<button class="ac" data-dl="'+i+'" title="Eliminar">'+(armed===i?'¿Seguro?':'🗑️')+'</button>')+'</div>'}).join('')+'<button class="padd" id="padd">+ Añadir empresa</button><div class="pf" id="pf"><label>Nombre de la empresa</label><input id="pf_n" placeholder="Ej. Inversiones Ejemplo S.L."><label>CIF (puedes completarlo después)</label><input id="pf_c" placeholder="B00000000"><button class="go" id="pf_go">Crear y entrar</button></div><div class="pn">Cada empresa tiene sus propios locales, facturas y copias de seguridad, separados de los demás.</div></div>'}
+function render(){P.innerHTML='<div class="pp">'+LOGO+'<h1>Umbral</h1><p>Gestión de alquileres · elige la empresa</p>'+cos.map(function(c,i){return'<div class="pco"><button class="en" data-en="'+esc(c.id)+'"><b>'+esc(c.n)+'</b><small>'+esc(cnt(c.id))+'</small></button><button class="ac" data-rn="'+i+'" title="Cambiar nombre">✏️</button>'+(c.id==='main'?'':'<button class="ac" data-dl="'+i+'" title="Eliminar">'+(armed===i?'¿Seguro?':'🗑️')+'</button>')+'</div>'}).join('')+'<button class="padd" id="padd">+ Añadir empresa</button><div class="pf" id="pf"><label>Nombre de la empresa</label><input id="pf_n" placeholder="Ej. Inversiones Ejemplo S.L."><label>CIF (puedes completarlo después)</label><input id="pf_c" placeholder="B00000000"><button class="go" id="pf_go">Crear y entrar</button></div><div class="pn">Cada empresa tiene sus propios locales, facturas y copias de seguridad, separados de los demás.</div><div class="pst" id="pst"></div></div>';setTimeout(pst,0)}
+
+function pst(){var el=document.getElementById('pst');if(!el||location.protocol!=='file:'||!window.__B)return;
+var h='<div>Versión <b>'+window.__B+'</b></div>',fb=null,gh=null;
+try{fb=JSON.parse(localStorage.getItem('fx_fb'))}catch(e){}try{gh=JSON.parse(localStorage.getItem('fx_gh'))}catch(e){}
+h+='<div>'+(fb&&fb.pid&&fb.rt?'☁️ Nube conectada'+(fb.email?' ('+esc(fb.email)+')':''):'☁️ Nube sin conectar')+'</div>';
+h+=gh&&gh.r&&gh.t?'<div id="pup">Comprobando actualizaciones…</div>':'<div>Actualizaciones automáticas sin configurar</div>';
+el.innerHTML=h;if(gh&&gh.r&&gh.t)pchk(gh)}
+function pchk(gh){var u=document.getElementById('pup');if(!u)return;
+fetch('https://api.github.com/repos/'+gh.r+'/contents/version.json',{headers:{Authorization:'Bearer '+gh.t,Accept:'application/vnd.github.raw+json','X-GitHub-Api-Version':'2022-11-28'},cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(v){var b=+v.b||0;
+if(b>window.__B){u.innerHTML='⬆️ Hay una versión nueva (<b>'+b+'</b>) <button class="go" id="pup_b" style="padding:5px 12px;margin-left:6px">Actualizar ahora</button>';document.getElementById('pup_b').onclick=function(){pdl(gh,b,this)}}else u.innerHTML='✔ Estás al día'}).catch(function(){u.textContent='No se pudo comprobar si hay actualizaciones (¿sin internet?)'})}
+function pdl(gh,b,btn){btn.disabled=true;btn.textContent='Descargando…';
+fetch('https://api.github.com/repos/'+gh.r+'/contents/umbral.html',{headers:{Authorization:'Bearer '+gh.t,Accept:'application/vnd.github.raw+json','X-GitHub-Api-Version':'2022-11-28'},cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){var m=/const BUILD=(\d+),BUILD_D='([^']*)'/.exec(t);if(!m||+m[1]!==b)throw 0;
+var q=indexedDB.open('fx_sync',1);q.onupgradeneeded=function(){q.result.createObjectStore('h')};q.onerror=function(){btn.textContent='Error'};
+q.onsuccess=function(){var tx=q.result.transaction('h','readwrite');tx.objectStore('h').put({t:t,b:b,d:m[2]},'app');tx.oncomplete=function(){location.reload()};tx.onerror=function(){btn.textContent='Error'}}}).catch(function(){btn.disabled=false;btn.textContent='Reintentar'})}
 var LOGO='<svg class="lgo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="ug" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4A8CC2"/><stop offset="1" stop-color="#2A5C8C"/></linearGradient></defs><rect width="64" height="64" rx="13" fill="url(#ug)"/><path d="M17 47V30a15 15 0 0 1 30 0v17" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect x="9" y="50" width="46" height="6" rx="3" fill="#BFE6D0"/></svg>';
 render();
 try{if(window.claude&&claude.use)claude.use('db').then(function(db){if(!db)return;window.__PDB=db;return db.doc('cloud/_cos').get().then(function(sn){if(!sn.exists)return;var r=JSON.parse(sn.data().v),ch=0;r.forEach(function(c){if(!c||!c.id||!c.n)return;var f=cos.filter(function(x){return x.id===c.id})[0];if(!f){cos.push({id:c.id,n:c.n});ch=1}else if(f.n!==c.n){f.n=c.n;ch=1}});if(ch){try{localStorage.setItem('fx_cos',JSON.stringify(cos))}catch(e){}render()}})}).catch(function(){})}catch(e){}
@@ -651,7 +666,7 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>rGen(),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=74,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
+const BUILD=75,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+BUILD:'En línea · v'+BUILD;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
