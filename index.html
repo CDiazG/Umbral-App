@@ -669,7 +669,7 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=80,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
+const BUILD=81,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+BUILD:'En línea · v'+BUILD;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -1738,7 +1738,17 @@ const UPOK=OFFL&&!!window.showOpenFilePicker&&!!window.showSaveFilePicker&&!!win
 const upKv=(m,k,v)=>new Promise((ok,no)=>{const q=indexedDB.open('fx_sync',1);q.onupgradeneeded=()=>q.result.createObjectStore('h');q.onerror=()=>no(q.error);q.onsuccess=()=>{try{const st=q.result.transaction('h',m==='get'?'readonly':'readwrite').objectStore('h'),x=m==='get'?st.get(k):m==='set'?st.put(v,k):st.delete(k);x.onsuccess=()=>ok(x.result);x.onerror=()=>no(x.error)}catch(z){no(z)}}});
 const UP={txt:'',nb:0,nd:'',prev:null,msg:''};
 const upInfo=t=>{const m=String(t).match(/const BUILD=(\d+),BUILD_D='([^']*)'/);return m&&String(t).includes('window._pdfw=')&&t.length>1500000&&/<title>Gesti/.test(t)?{b:+m[1],d:m[2]}:null};
-async function upOpen(){UP.txt='';UP.nb=0;UP.msg='';try{const p=await upKv('get','prev');UP.prev=p&&p.t?p:null}catch(x){UP.prev=null}upRender()}
+async function upAuto(){const m=fxModal('upa','<div style="text-align:center;padding:10px 4px"><div style="font-size:30px">⬆️</div><h3 style="margin:8px 0">Buscando actualizaciones…</h3><p style="margin:0;color:var(--ink2)">Mirando en GitHub si hay una versión nueva.</p></div>');GH.asked=0;
+try{await ghCheck(1)}catch(x){}
+const b=document.getElementById('upa');if(!b)return;
+if(document.getElementById('ghu')){b.remove();return}
+const pend=/descargada/.test(GH.ok)?(GH.ok.match(/Versión (\d+)/)||[])[1]:0;
+if(pend&&+pend>BUILD){b.remove();ghAsk(+pend,'');return}
+const body=GH.err?`<div style="font-size:30px;text-align:center">⚠️</div><h3 style="margin:8px 0;text-align:center">No se ha podido comprobar</h3><p>${e(GH.err)}</p><div class="g" style="justify-content:center"><button onclick="document.getElementById('upa').remove();upManual()">Actualizar a mano</button><button class="p" onclick="document.getElementById('upa').remove()">Cerrar</button></div>`
+:`<div style="font-size:30px;text-align:center">✅</div><h3 style="margin:8px 0;text-align:center">Estás al día</h3><p style="text-align:center">Versión <b>${BUILD}</b>${BUILD_D?' · '+e(BUILD_D):''}. No hay nada más nuevo en GitHub.</p><div class="g" style="justify-content:center"><button class="p" onclick="document.getElementById('upa').remove()">Cerrar</button></div>`;
+b.firstChild.innerHTML=body}
+async function upOpen(){if(OFFL&&ghCfg())return upAuto();return upManual()}
+async function upManual(){UP.txt='';UP.nb=0;UP.msg='';try{const p=await upKv('get','prev');UP.prev=p&&p.t?p:null}catch(x){UP.prev=null}upRender()}
 function upRender(){let o=document.getElementById('upm');if(o)o.remove();o=document.createElement('div');o.id='upm';o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;overflow:auto;padding:16px;display:flex;justify-content:center;align-items:flex-start';
 const nuevo=UP.nb>BUILD;
 o.innerHTML=`<div style="background:#fff;border-radius:8px;max-width:620px;width:100%;padding:16px 18px;box-shadow:0 4px 24px rgba(0,0,0,.4)"><h2 style="margin:0 0 6px;font-size:18px">⬆ Actualizar programa</h2>
