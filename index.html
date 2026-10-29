@@ -602,6 +602,7 @@ function ed(){const t=T[S.sel];if(t){try{recAdd(t.k);renderRecs()}catch(x){}}if(
 <h3 style="margin:6px 0 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap">${e(t.n)} <button type="button" onclick="verPan(S.sel)" title="Gráficos y datos de este inquilino" style="font-size:12px;padding:4px 10px;min-height:28px">📊 Panel</button></h3>
 <div class="fm-sub">${e(locOf(t))} · ${t.no||'sin nº'}${car(t)?' · <b class=wn2>Sin cobrar hasta '+scTxt(t)+'</b>':due(t)?'':' · <b class=wn2>no toca este mes</b>'}${gen1(t)?' · <b class=ok>✔ ya generada</b>':''}</div>
 <div class="fm-r">Renta ${t.q?'reducida':'del contrato'}: <b>${f(t.q?t.red:t.r)}</b></div>
+${fcIpcHtml(t)}
 <label><input type=checkbox style="width:auto" ${t.q?'checked':''} onchange="T[S.sel].q=this.checked;up();ed()"> Aplicar reducción de renta este mes (desmárcalo cuando deje de aplicarse)</label>
 ${t.q?`<label>Renta reducida (€)</label><input type=number step=.01 value="${t.red}" oninput="T[S.sel].red=+this.value;up()">
 <label>Cláusula de la reducción ({RED}, {M} y {A} se rellenan solos)</label><textarea rows=3 oninput="T[S.sel].ct=this.value;save()">${e(t.ct)}</textarea>`:''}
@@ -625,7 +626,18 @@ ${t.x.map((x,j)=>`<div class="x x4"><input id="fxl${j}" value="${e(x[0])}" oninp
 ${(t.fr||'M')!='M'?`<label>Primer mes de facturación (después se repite cada ${t.fr=='T'?'3 meses':'año'})</label><select onchange="T[S.sel].fm=+this.value;save();list()">${MN.map((m,i)=>`<option value="${i+1}" ${(t.fm||1)==i+1?'selected':''}>${m}</option>`).join('')}</select><small style="color:#47676a">Usa {TRIM} o {PERIODO} en el concepto para que los meses se pongan solos.</small>`:''}
 <label>Texto de la renta</label><input value="${e(t.l)}" oninput="T[S.sel].l=this.value;save()">
 <label>Renta (€)</label><input type=number step=.01 value="${t.r}" oninput="T[S.sel].r=+this.value;up()">
-</div></details>`;tot();lv();nck();if(S.fx){const q=S.fx;S.fx=null;const el=$((q[1]=='a'?'fxa':'fxl')+q[0]);if(el){el.focus();try{el.select()}catch(x){}}}fcLay()}
+</div></details>`;tot();lv();nck();fcIpcInit(t);if(S.fx){const q=S.fx;S.fx=null;const el=$((q[1]=='a'?'fxa':'fxl')+q[0]);if(el){el.focus();try{el.select()}catch(x){}}}fcLay()}
+/* IPC pendiente directamente en la factura del mes */
+function fcIpcHtml(t){let P=[];try{P=ipcPend(t)}catch(x){}if(!P.length)return'';const i=T.indexOf(t);
+return P.map((r,j)=>{const n=lagM(r.key),p=r.pct;return `<div class="mh fcipc" id="fpi${j}"><b>🔔 Toca actualizar la renta por el IPC de ${kl(r.key)}</b> <small>(renta actual ${f(t.r)})</small>
+<div class="nf" style="border:0;padding:6px 0 0"><div><label>IPC % (INE)</label><input id="fpp${j}" inputmode="decimal" style="width:90px" value="${p!=null?String(p).replace('.',','):''}" placeholder="% INE" oninput="fcIpcUp(${i},'${r.key}',${j})"></div><div><label>Meses atrasados</label><input id="fpn${j}" type="number" min="0" style="width:80px" value="${n}" oninput="fcIpcUp(${i},'${r.key}',${j})"></div></div>
+<div id="fps${j}" style="margin-top:6px"></div>${p==null?'<small style="color:#47676a">Aún no hay dato del INE guardado: escríbelo aquí. '+(r.r[2]?e(r.r[2]):'')+'</small>':(r.prov?'<small style="color:#47676a">Dato '+r.prov+'; el definitivo sale a mediados de mes. </small>':'')}${p!=null&&r.r[2]?'<small style="color:#47676a">'+e(r.r[2])+'</small>':''}</div>`}).join('')}
+function fcIpcInit(t){try{if(!t)return;const i=T.indexOf(t);ipcPend(t).forEach((r,j)=>{if($('fpp'+j))fcIpcUp(i,r.key,j)})}catch(x){}}
+function fcIpcUp(i,key,j){const t=T[i],el=$('fps'+j);if(!el)return;const p=parseFloat(String($('fpp'+j).value).replace(',','.')),n=+$('fpn'+j).value||0;
+if(!(p>=0)){el.innerHTML=`<small>Escribe el porcentaje para calcular la renta nueva.</small> <button type="button" onclick="fcIpcMk(${i},'${key}')">Ya estaba aplicada</button>`;return}
+const s=ipcSug({t},p,n);el.innerHTML=`Renta nueva <b>${f(s.nr)}</b> (+${f(s.df)} al mes)${n&&s.at>0?`, atrasos <b>${f(s.at)}</b> en base (${f(calc({q:false,r:0,x:[['',s.at]]}).tot)} con IVA e IRPF)`:''}<br><button type="button" class="p" style="margin-top:6px" onclick="fcIpcDo(${i},'${key}',${j})">Aplicar actualización IPC</button> <button type="button" style="margin-top:6px" onclick="fcIpcMk(${i},'${key}')">Ya estaba aplicada</button>`}
+function fcIpcDo(i,key,j){const p=parseFloat(String($('fpp'+j).value).replace(',','.')),n=+$('fpn'+j).value||0;if(!(p>=0))return;apRow(i,key,p,n);S.sel=i;try{list()}catch(x){}ed();up()}
+function fcIpcMk(i,key){AP[T[i].k]=key;sap();S.sel=i;try{list()}catch(x){}ed()}
 function fcAddX(l){const t=T[S.sel];if(!t)return;t.x.push([l,0]);S.fx=[t.x.length-1,l?'a':'l'];ed();up()}
 function nw(){S.one=1;UNL.add('e'+T.length);T.push({k:'NUEVO|LOCAL NUEVO',no:'',n:'NUEVO CLIENTE (completar)',c:'',d:'',t:'Arrendamiento local (completar). '+M_,b:0,l:'RENTA',r:0,x:[],on:true,q:false,red:0,ct:''});S.sel=T.length-1;up();ed();$('ed').scrollIntoView()}
 function clr(b){if(b.dataset.s!='1'){b.dataset.s='1';b.textContent='¿Seguro? Pulsa otra vez';return}T.forEach(t=>t.x=t.x.filter(isRec));b.dataset.s='';b.textContent='Quitar gastos puntuales';ed();up()}
@@ -689,8 +701,8 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=89,BUILD_D='29 oct 2026',VER='2.2.0',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=90,BUILD_D='29 oct 2026',VER='2.3.0',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -972,7 +984,7 @@ function rowIpc(x){const n=lagM(x.key),p=x.pct,s=ipcSug(x,p,n);return `<div clas
 function upRow(i,key){const t=T[i],p=parseFloat(String($('ip'+i).value).replace(',','.')),n=+$('in'+i).value||0,el=$('is'+i);
 if(!(p>=0)){el.innerHTML='Escribe el porcentaje del INE.';return}const s=ipcSug({t},p,n);
 el.innerHTML=`Renta nueva <b>${f(s.nr)}</b> (+${f(s.df)} al mes)${n?`, atrasos <b>${f(s.at)}</b> en base (${f(calc({q:false,r:0,x:[['',s.at]]}).tot)} con IVA e IRPF)`:''}<br><button class="p" style="margin-top:6px" onclick="apRow(${i},'${key}',${p},${n})">Aplicar a la factura</button> <button style="margin-top:6px" onclick="mkRow(${i},'${key}')">Ya estaba aplicada</button>`}
-function apRow(i,key,p,n){const t=T[i],s=ipcSug({t},p,n);t.r=s.nr;t.l='RENTA actualizada según IPC '+kl(key).toUpperCase()+' (+'+String(p).replace('.',',')+'%)';if(n>0&&s.at>0)t.x.push(['ACTUALIZACIÓN RENTA ('+n+' MESES x '+f(r2(s.at/n))+')',s.at]);chgLog(t,'Renta (IPC '+kl(key)+')',f(s.nr-s.df),f(s.nr));AP[t.k]=key;sap();save();$('ir'+i).innerHTML='<p class="ok">Aplicado a '+e(t.n)+'. Ya está en la pestaña Facturas.</p>'}
+function apRow(i,key,p,n){const t=T[i],s=ipcSug({t},p,n);t.r=s.nr;t.l='RENTA actualizada según IPC '+kl(key).toUpperCase()+' (+'+String(p).replace('.',',')+'%)';if(n>0&&s.at>0)t.x.push(['ACTUALIZACIÓN RENTA ('+n+' MESES x '+f(r2(s.at/n))+')',s.at]);chgLog(t,'Renta (IPC '+kl(key)+')',f(s.nr-s.df),f(s.nr));AP[t.k]=key;sap();save();if($('ir'+i))$('ir'+i).innerHTML='<p class="ok">Aplicado a '+e(t.n)+'. Ya está en la pestaña Facturas.</p>'}
 function mkRow(i,key){AP[T[i].k]=key;sap();rIpc()}
 function addIpc(){const p=parseFloat(String($('u_p').value).replace(',','.'));if(isNaN(p)){alert('Escribe la tasa anual, por ejemplo 4,9.');return}IPCU[kn(+$('u_y').value,+$('u_m').value)]=p;try{LSX.setItem('fl_ipc',JSON.stringify(IPCU))}catch(x){}rIpc()}
 
@@ -1126,7 +1138,7 @@ const k=$('es_ck');if(k){const t=esT();k.innerHTML=ckHtml(noCheck(t.no,t.k,t.dat
 function esSet(k,v){ES[k]=v;if(k=='i'){const t=T[ES.i];ES.sp=t.sp!==false;ES.sig=!!t.sig;ES.m=false;ES.no=esSug();rEsp();return}if(k=='date'&&!ES.m)ES.no=esSug(),$('es_no').value=ES.no;esLv()}
 function esLine(j,k,v){ES.lines[j][k]=v;esLv()}
 function rEsp(){if(!T.length){$('v-esp').innerHTML='<h2>Factura especial</h2><p>Esta empresa todavía no tiene locales. Añade el primero en «Facturas».</p>';return}if(ES.i>=T.length)ES.i=0;if(!ES.date)ES.date=iso(TODAY);if(!ES.no)ES.no=esSug();const t=T[ES.i];
-$('v-esp').innerHTML=`<h2>Factura especial</h2><p>Para un cobro fuera del ciclo mensual, trimestral o anual (liquidación, obra, regularización…). Usa los datos del cliente y la serie del local; no cambia el número de las facturas normales.</p>
+$('v-esp').innerHTML=`<div style="margin:0 0 8px"><button type="button" onclick="show('fac')">← Volver a Facturas del mes</button></div><h2>Factura especial</h2><p>Para un cobro fuera del ciclo mensual, trimestral o anual (liquidación, obra, regularización…). Usa los datos del cliente y la serie del local; no cambia el número de las facturas normales.</p>
 <div style="display:grid;grid-template-columns:minmax(300px,1fr) minmax(280px,420px);gap:14px;align-items:start"><div><div class="nf" style="grid-template-columns:1fr">
 <div><label>Local / cliente</label><select onchange="esSet('i',+this.value)">${T.map((x,i)=>`<option value="${i}" ${i==ES.i?'selected':''}>${e(locN(x))} · ${e(x.n)}</option>`).join('')}</select></div>
 <div><label>Fecha de la factura</label><input type="date" value="${ES.date}" oninput="esSet('date',this.value)"></div>
@@ -1134,7 +1146,7 @@ $('v-esp').innerHTML=`<h2>Factura especial</h2><p>Para un cobro fuera del ciclo 
 <div><label>Descripción general (aparece bajo «Concepto»)</label><textarea rows="3" oninput="ES.txt=this.value;esLv()">${e(ES.txt)}</textarea></div>
 <div><label>Líneas de la factura (importes sin IVA)</label>${ES.lines.map((l,j)=>`<div class="x"><input value="${e(l[0])}" placeholder="Concepto" oninput="esLine(${j},0,this.value)"><input type="number" step=".01" value="${l[1]||''}" placeholder="€" oninput="esLine(${j},1,this.value)"><button onclick="ES.lines.splice(${j},1);if(!ES.lines.length)ES.lines=[['',0]];rEsp()">✕</button></div>`).join('')}<button onclick="ES.lines.push(['',0]);rEsp()">+ Añadir línea</button></div>
 <div><label>Forma de pago (se cambia en Inquilinos)</label><div style="padding:6px 8px;border:1px solid #d8e4e4;border-radius:4px;background:#f7f7f7">${e(payTxt(t))}</div><label><input type="checkbox" style="width:auto" ${ES.sp?'checked':''} onchange="ES.sp=this.checked;esLv()"> Mostrar la forma de pago</label><label><input type="checkbox" style="width:auto" ${ES.sig?'checked':''} onchange="ES.sig=this.checked;esLv()"> Añadir líneas de firma</label></div></div>
-<p id="es_tt" style="text-align:right"></p><div class="g"><button onclick="esPv()">Vista previa</button><button class="p" onclick="esDl()">Descargar PDF y registrar</button></div></div><div id="es_lv"></div></div>`;esLv()}
+<p id="es_tt" style="text-align:right"></p><div class="g"><button onclick="esPv()">Vista previa</button><button class="p" onclick="esDl()">Descargar PDF y registrar</button><button type="button" onclick="show('fac')">Cancelar y volver</button></div></div><div id="es_lv"></div></div>`;esLv()}
 /* ===== Nuevo local y nuevo inquilino ===== */
 let NS={i:null};
 const NK=()=>NS.i!=null&&T[NS.i]?T[NS.i].k:'NUEVO';
