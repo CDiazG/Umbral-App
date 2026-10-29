@@ -714,8 +714,8 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=95,BUILD_D='29 oct 2026',VER='2.7.0',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=96,BUILD_D='29 oct 2026',VER='2.7.1',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -729,7 +729,7 @@ const favs=()=>lsj('fl_fav',[]);
 function setFav(id){let a=favs();a=a.includes(id)?a.filter(x=>x!=id):[...a,id];try{LSX.setItem('fl_fav',JSON.stringify(a))}catch(x){}buildMenu()}
 function recAdd(k){let a=lsj('fl_rec',[]).filter(x=>x!=k);a.unshift(k);try{LSX.setItem('fl_rec',JSON.stringify(a.slice(0,8)))}catch(x){}}
 function openLoc(i){S.sel=i;LQ='';show('fac');list();ed()}
-function recHtml(){const a=lsj('fl_rec',[]).map(k=>T.findIndex(t=>t.k===k)).filter(i=>i>=0).slice(0,3);return a.length?`<div class="gl">Recientes</div>`+a.map(i=>`<button class="rc" onclick="openLoc(${i})"><span class="mi">${icn('clock')}</span><span class="t">${e(locOf(T[i]))}</span></button>`).join(''):''}
+function recHtml(){return '';const a=lsj('fl_rec',[]).map(k=>T.findIndex(t=>t.k===k)).filter(i=>i>=0).slice(0,3);return a.length?`<div class="gl">Recientes</div>`+a.map(i=>`<button class="rc" onclick="openLoc(${i})"><span class="mi">${icn('clock')}</span><span class="t">${e(locOf(T[i]))}</span></button>`).join(''):''}
 function renderRecs(){const el=$('recs');if(el)el.innerHTML=recHtml()}
 function menuCounts(){const c={};try{c.cob=Object.values(H).filter(h=>!h.cob).length}catch(x){}try{c.fac=T.filter(t=>inc(t)&&!gen1(t)).length}catch(x){}try{c.ale=avisos().filter(a=>a[0]=='w').length}catch(x){}try{c.pen=penOpen()}catch(x){}return c}
 function itemHtml(v,fv,C,grp){const id=v[0],fav=fv.includes(id),n=C[id];return `<button data-id="${id}" class="${grp?'':'top1'} ${id==CUR?'on':''}" onclick="show('${id}')"><span class="mi">${icn(ICV[id]||'folder')}</span><span class="t">${e(v[1])}</span>${n?`<span class="bd">${n}</span>`:''}<span class="st ${fav?'on':''}" role="button" title="${fav?'Quitar de favoritos':'Añadir a favoritos'}" onclick="event.stopPropagation();setFav('${id}')">${fav?'★':'☆'}</span></button>`}
