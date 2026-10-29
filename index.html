@@ -484,6 +484,21 @@ var id2=cos[j].id,ks=[];for(var q=0;q<localStorage.length;q++){var k=localStorag
 <section class="v" id="v-aju" hidden></section>
 <section class="v" id="v-cob" hidden></section><section class="v" id="v-ale" hidden></section><section class="v" id="v-ipc" hidden></section><section class="v" id="v-ema" hidden></section><section class="v" id="v-res" hidden></section>
 </div></div>
+<script>(function(){var c=null,ok=0;try{c=JSON.parse(localStorage.getItem('fx_fb'))}catch(e){}try{ok=sessionStorage.getItem('fx_gate')==='1'}catch(e){}
+if(!c||!c.key||!c.rt||ok)return;
+window.__CO=null;document.body.classList.add('ptl');var P=document.getElementById('portal');if(!P)return;
+function esc(t){return String(t).replace(/[&<>"]/g,function(x){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[x]})}
+var lg=document.querySelector('#top .lgo');
+P.innerHTML='<div class="pp pf on">'+(lg?lg.outerHTML:'')+'<h1>Umbral</h1><p>Inicia sesión para continuar</p><label>Correo<input id="gt_e" type="email" autocomplete="username" value="'+esc(c.email||'')+'"></label><label>Contraseña<input id="gt_w" type="password" autocomplete="current-password"></label><p id="gt_m" style="color:#b3261e;min-height:18px;margin:8px 0 0"></p><button class="go" id="gt_b">Entrar</button></div>';
+var m=document.getElementById('gt_m'),b=document.getElementById('gt_b'),w=document.getElementById('gt_w'),e=document.getElementById('gt_e');
+function go(){var em=e.value.trim().toLowerCase(),pw=w.value;if(!em||!pw){m.textContent='Escribe el correo y la contraseña.';return}
+b.disabled=true;b.textContent='Entrando…';m.textContent='';
+fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+encodeURIComponent(c.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw,returnSecureToken:true})}).then(function(r){return r.json().then(function(j){return{r:r,j:j}})}).then(function(o){
+if(!o.r.ok){var s=(o.j.error&&o.j.error.message)||'';throw new Error(/INVALID_LOGIN|INVALID_PASSWORD|EMAIL_NOT_FOUND/.test(s)?'Correo o contraseña incorrectos.':/TOO_MANY/.test(s)?'Demasiados intentos; espera unos minutos.':'No se pudo iniciar sesión.')}
+if(String(c.email||'').toLowerCase()!==em)throw new Error('Ese correo no es el de esta conexión.');
+c.rt=o.j.refreshToken||c.rt;c.idt=o.j.idToken;c.exp=Date.now()+(+o.j.expiresIn||3600)*1000;try{localStorage.setItem('fx_fb',JSON.stringify(c))}catch(x){}
+try{sessionStorage.setItem('fx_gate','1')}catch(x){}location.reload()}).catch(function(x){b.disabled=false;b.textContent='Entrar';m.textContent=(x&&x.message&&!/fetch|Failed|network/i.test(x.message))?x.message:'Sin conexión a internet.'})}
+b.onclick=go;w.onkeydown=function(ev){if(ev.key==='Enter')go()};setTimeout(function(){(e.value?w:e).focus()},50)})()</script>
 <script>
 if(!window.__CO)throw new Error('portal');
 const CO=window.__CO,MAIN=CO==='main',PFX=MAIN?'':CO+'_',CONAME=(window.__COS.find(c=>c.id===CO)||{}).n||'';
@@ -669,7 +684,7 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=82,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
+const BUILD=83,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+BUILD:'En línea · v'+BUILD;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -692,7 +707,7 @@ const top=G.filter(g=>!g[0]).map(g=>g[1].map(v=>itemHtml(v,fv,C,0)).join('')).jo
 const fh=fv.filter(id=>byId[id]&&id!='ini').length?`<div class="gl">Favoritos</div>`+fv.filter(id=>byId[id]&&id!='ini').map(id=>itemHtml(byId[id],fv,C,0)).join(''):'';
 const gr=G.filter(g=>g[0]).map(g=>{const op=g[1].some(v=>v[0]==CUR),cnt=g[1].reduce((a,v)=>a+(C[v[0]]||0),0);return `<div class="gr ${GCOL[g[0]]||'g4'} ${op?'open':''}"><div class="gh" role="button" tabindex="0" aria-expanded="${op}"><span class="mi">${icn(ICG[g[0]]||'folder')}</span><span class="t">${e(g[0])}</span>${cnt?`<span class="bd">${cnt}</span>`:''}<i class="chv"></i></div><div class="gb"><div class="gi">${g[1].map(v=>itemHtml(v,fv,C,1)).join('')}</div></div></div>`}).join('');
 $('side').classList.toggle('rail',lsx('fx_rail')==='1');
-$('side').innerHTML=`<div class="sin">${top}${fh}<div id="recs">${recHtml()}</div>${gr}<div class="foot"><div class="tm" role="group" aria-label="Apariencia">${[['claro','Claro'],['oscuro','Oscuro'],['auto','Auto']].map(t=>`<button class="${(window.__tema||'auto')==t[0]?'on':''}" onclick="setTema('${t[0]}')">${t[1]}</button>`).join('')}</div><button class="sf rl" onclick="toggleRail()">${lsx('fx_rail')==='1'?'Menú ancho':'Menú compacto'}</button><button class="sf" onclick="cambiarEmpresa()">Cambiar de empresa</button>${OFFL?`<button class="sf" onclick="upOpen()">Actualizar programa</button>`:''}<div class="ver">Umbral · versión ${BUILD} · ${BUILD_D}<br>${OFFL?'Archivo sin conexión (datos aparte)':'En línea (claude.ai)'}</div></div></div>`;gbn()}
+$('side').innerHTML=`<div class="sin">${top}${fh}<div id="recs">${recHtml()}</div>${gr}<div class="foot"><div class="tm" role="group" aria-label="Apariencia">${[['claro','Claro'],['oscuro','Oscuro'],['auto','Auto']].map(t=>`<button class="${(window.__tema||'auto')==t[0]?'on':''}" onclick="setTema('${t[0]}')">${t[1]}</button>`).join('')}</div><button class="sf rl" onclick="toggleRail()">${lsx('fx_rail')==='1'?'Menú ancho':'Menú compacto'}</button><button class="sf" onclick="cambiarEmpresa()">Cambiar de empresa</button><button class="sf" onclick="try{sessionStorage.removeItem('fx_gate')}catch(x){}location.reload()">Cerrar sesión</button>${OFFL?`<button class="sf" onclick="upOpen()">Actualizar programa</button>`:''}<div class="ver">Umbral · versión ${BUILD} · ${BUILD_D}<br>${OFFL?'Archivo sin conexión (datos aparte)':(window.claude?'En línea (claude.ai)':'Versión web')}</div></div></div>`;gbn()}
 const lsx=k=>{try{return window.localStorage.getItem(k)}catch(x){return null}};
 function toggleRail(){try{window.localStorage.setItem('fx_rail',lsx('fx_rail')==='1'?'0':'1')}catch(x){}buildMenu()}
 function sect(id){let el=$('v-'+id);if(!el){el=document.createElement('section');el.className='v';el.id='v-'+id;el.hidden=true;$('content').appendChild(el)}return el}
