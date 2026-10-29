@@ -634,7 +634,7 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>rGen(),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=67,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
+const BUILD=68,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+BUILD:'En línea · v'+BUILD;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -665,6 +665,20 @@ function mnu(){document.body.classList.toggle('mo')}
 function bnavOn(){document.querySelectorAll('#bnav button[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==CUR))}
 function show(v){CUR=v;document.body.classList.remove('mo');setTimeout(()=>{window.scrollTo(0,0);bnavOn()},0);document.querySelectorAll('.v').forEach(x=>x.hidden=true);$('v-fac').hidden=v!='fac';if(v!='fac')sect(v).hidden=false;$('hd').hidden=v!='fac';buildMenu();bcRender();
 if(VIEWS[v])VIEWS[v]();else rCp(v);scrollTo(0,0)}
+/* ===== Botón «atrás» del móvil: vuelve a la pantalla anterior en lugar de salir ===== */
+(function(){if(window.claude||!window.history||!history.pushState)return;
+const s0=show;let first=true,pop=false,last=null;
+try{history.replaceState({v:'ini'},'')}catch(x){return}
+show=function(v){
+  try{
+    if(!pop){const st=v=='pan'?{v:v,i:PAN.i}:{v:v};
+      if(first||v===last)history.replaceState(st,'');else history.pushState(st,'');}
+  }catch(x){}
+  first=false;last=v;pop=false;return s0.apply(this,arguments)};
+window.addEventListener('popstate',function(e){const st=e.state;if(!st||!st.v||!document.getElementById('v-'+st.v)&&st.v!='fac')return;
+  const m=document.getElementById('gdm')||document.getElementById('clm');
+  pop=true;try{if(st.v=='pan'&&st.i!=null&&T[st.i])PAN.i=st.i;show(st.v)}catch(x){pop=false}});
+})();
 function rCp(id){const c=CP.find(x=>x.id==id),el=sect(id);if(!c){el.innerHTML='<p>Apartado no encontrado.</p>';return}
 el.innerHTML=c.tipo=='enlace'?`<h2>${e(c.t)}</h2><p>${e(c.x)}</p><p><a href="${e(c.u)}" target="_blank" rel="noopener"><button class="p">Abrir enlace</button></a></p>`:`<h2>${e(c.t)}</h2><p>Notas libres. Se guardan solas.</p><textarea id="cpx" rows="16" style="width:100%" oninput="CP.find(x=>x.id=='${id}').x=this.value;scp()">${e(c.x||'')}</textarea>`}
 const MN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
