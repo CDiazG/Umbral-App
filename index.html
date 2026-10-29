@@ -424,6 +424,7 @@ html.dk .dr-av{color:hsl(var(--h) 60% 74%)}
 .qg{display:grid;grid-template-columns:44px repeat(12,minmax(0,1fr));gap:3px;margin-top:12px}.qh{text-align:center;font-size:11px;color:var(--ink2);text-transform:uppercase}.qy{font-weight:600;font-size:13px;display:flex;align-items:center}
 .qc{min-height:44px;border:1px solid var(--ln);border-radius:6px;text-align:center;font-size:12px;padding:3px 0;cursor:pointer;overflow:hidden}.qc:hover{border-color:var(--bl)}.qc.l1{background:color-mix(in srgb,var(--bl) 14%,transparent)}.qc.l2{background:color-mix(in srgb,var(--bl) 28%,transparent)}.qc.l3{background:color-mix(in srgb,var(--bl) 45%,transparent)}
 @media(max-width:600px){.qg{grid-template-columns:34px repeat(12,minmax(0,1fr));gap:2px}.qc{min-height:38px;font-size:11px}.qh{font-size:9px}}
+.fcsum{margin:0 0 10px}.fcmsg{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.fchips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.fchip{font-size:12px;padding:4px 10px;min-height:28px;border-radius:14px}.fchip.on{background:var(--bl);color:#fff;border-color:var(--bl)}.ik-d{margin:0 0 14px}.ik-d .cd small+b+small{display:block}
 </style></head><body>
 <div id="portal"></div>
 <script>
@@ -484,7 +485,7 @@ var id2=cos[j].id,ks=[];for(var q=0;q<localStorage.length;q++){var k=localStorag
 <button onclick="clr(this)">Quitar gastos puntuales</button>
 <button class="p" onclick="all_()">PDF de las marcadas (un solo archivo)</button>
 </header>
-<main id="v-fac"><div><div id="fmx"></div><input id="lq" type="search" placeholder="Buscar local o inquilino (ej. gc 41, jativa 17, turrón, oftalvist)" autocomplete="off" style="width:100%;box-sizing:border-box;margin-bottom:8px" oninput="LQ=this.value;window.list()" onkeydown="if(event.key==='Enter')lqGo()"><div id="lqi" style="font-size:12px;color:#47676a;margin:-2px 0 6px"></div><div id="list"></div></div><div id="ed"></div><div id="lv"></div></main>
+<main id="v-fac"><div><div id="fmx"></div><div id="fsm"></div><input id="lq" type="search" placeholder="Buscar local o inquilino (ej. gc 41, jativa 17, turrón, oftalvist)" autocomplete="off" style="width:100%;box-sizing:border-box;margin-bottom:8px" oninput="LQ=this.value;window.list()" onkeydown="if(event.key==='Enter')lqGo()"><div id="lqi" style="font-size:12px;color:#47676a;margin:-2px 0 6px"></div><div id="list"></div></div><div id="ed"></div><div id="lv"></div></main>
 <section class="v" id="v-ini" hidden></section>
 <section class="v" id="v-cal" hidden></section>
 <section class="v" id="v-inq" hidden></section>
@@ -603,7 +604,7 @@ for(const [w] of toks){if(LQSTOP.has(w)&&toks.length>1)continue;let best=0;for(c
 return tot}
 function lqRank(){return T.map((t,i)=>({i,s:lqScore(t,LQ)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s||a.i-b.i)}
 function lqGo(){const r=lqRank();if(!r.length)return;fcOne(r[0].i)}
-function list(){const rk=LQ.trim()?lqRank().map(x=>x.i):T.map((t,i)=>i),li=$('lqi');if(li)li.textContent=LQ.trim()?(rk.length?rk.length+(rk.length==1?' resultado':' resultados')+' · Intro abre el primero':'Ningún local coincide'):'';$('list').innerHTML=rk.map(i=>{const t=T[i];return `<div class="r ${i==S.sel?'a':''}" ${car(t)?'style="opacity:.6" ':''}onclick="fcOne(${i})"><input type=checkbox ${t.on?'checked':''} onclick="event.stopPropagation();T[${i}].on=this.checked;save()"><span>${e(t.n)}<small>${e(locOf(t))} · ${t.no||'sin nº'}${car(t)?' · <b class=wn2>Sin cobrar hasta '+scTxt(t)+'</b>':due(t)?'':' · no toca este mes'}${gen1(t)?' · <b class=ok>✔ ya generada</b>':''}</small></span><b>${car(t)?'—':f(calc(t).tot)}</b></div>`}).join('')}
+function list(){const rk=fcFilt(LQ.trim()?lqRank().map(x=>x.i):T.map((t,i)=>i)),li=$('lqi');try{fcSum()}catch(x){}if(li)li.textContent=LQ.trim()?(rk.length?rk.length+(rk.length==1?' resultado':' resultados')+' · Intro abre el primero':'Ningún local coincide'):'';$('list').innerHTML=rk.map(i=>{const t=T[i];return `<div class="r ${i==S.sel?'a':''}" ${car(t)?'style="opacity:.6" ':''}onclick="fcOne(${i})"><input type=checkbox ${t.on?'checked':''} onclick="event.stopPropagation();T[${i}].on=this.checked;save()"><span>${e(t.n)}<small>${e(locOf(t))} · ${t.no||'sin nº'}${car(t)?' · <b class=wn2>Sin cobrar hasta '+scTxt(t)+'</b>':due(t)?'':' · no toca este mes'}${gen1(t)?' · <b class=ok>✔ ya generada</b>':''}</small></span><b>${car(t)?'—':f(calc(t).tot)}</b></div>`}).join('')||'<p style="margin:8px 2px;color:var(--ink2)">Ningún local en este filtro.</p>'}
 function tot(){const t=T[S.sel];if(!t||!$('tt'))return;const c=calc(t);$('tt').innerHTML=`<div>Base imponible: ${f(c.base)}</div><div>IVA 21%: +${f(c.iva)}</div><div>IRPF 19%: -${f(c.irpf)}</div><div><b>Total a pagar: ${f(c.tot)}</b></div>`}
 function up(){list();tot();save()}
 function ed(){const t=T[S.sel];if(t){try{recAdd(t.k);renderRecs()}catch(x){}}if(!t){$('ed').innerHTML='<h3 style="margin:0">Todavía no hay locales</h3><p>Esta empresa está vacía. Añade el primer local para empezar a facturar.</p><button class=p onclick="nw()">+ Añadir local</button>';return}$('ed').innerHTML=`<div class="fm"><div class="fm-bar"><button type="button" class="fm-back" onclick="fcBack()">← Locales</button>${fcNavHtml()}<span class="fm-mes">${MES[+$('m').value]} ${$('y').value}</span></div>
@@ -618,7 +619,7 @@ ${t.q?`<label>Renta reducida (€)</label><input type=number step=.01 value="${t
 ${t.x.map((x,j)=>`<div class="x x4"><input id="fxl${j}" value="${e(x[0])}" oninput="T[S.sel].x[${j}][0]=this.value;save()"><input id="fxa${j}" type=number step=.01 inputmode="decimal" value="${x[1]}" oninput="T[S.sel].x[${j}][1]=+this.value;up()"><label title="Marca si el gasto se repite cada mes; si no, se puede quitar al cambiar de mes"><input type=checkbox ${isRec(x)?'checked':''} onchange="T[S.sel].x[${j}][2]=this.checked;save()">repite</label><button type="button" class="lkx" onclick="T[S.sel].x.splice(${j},1);ed();up()">✕</button></div>`).join('')}
 <div class="fqa"><button type="button" onclick="fcAddX('IBI')">+ IBI</button><button type="button" onclick="fcAddX('Gastos de comunidad')">+ Comunidad</button><button type="button" onclick="fcAddX('Basuras')">+ Basuras</button><button type="button" onclick="fcAddX('')">+ Otro gasto</button></div>
 <div class=t id=tt></div>
-<div class="g fm-g"><button onclick="pvw(S.sel)">Vista previa</button><button class=p onclick="one()">Descargar PDF de esta factura</button>${fcNextBtn()}</div></div>
+<div class="g fm-g"><button onclick="pvw(S.sel)">Vista previa</button><button class=p onclick="one()">Descargar PDF de esta factura</button>${fcNextBtn()}${fcPendBtn()}</div></div>
 <details class="fd" ${UNL.has('e'+S.sel)?'open':''}><summary>Datos del local y de la factura <small>nº, concepto, cliente, renta, forma de pago…</small></summary><div class="fdi"><small style="color:#47676a">Los campos están bloqueados. Pulsa «✏️ Editar» para poder cambiarlos.</small>
 <label>Nombre del local</label><input value="${e(locOf(t))}" oninput="T[S.sel].loc=this.value.toUpperCase();save();list()">
 <label>Nº de factura (1-3 letras o cifras, punto, año y 2 cifras)</label><input data-v="no" value="${e(t.no)}" oninput="T[S.sel].no=this.value;up();nck()"><div id="nk" style="font-size:12px;margin-top:3px"></div>
@@ -635,6 +636,21 @@ ${(t.fr||'M')!='M'?`<label>Primer mes de facturación (después se repite cada $
 <label>Texto de la renta</label><input value="${e(t.l)}" oninput="T[S.sel].l=this.value;save()">
 <label>Renta (€)</label><input type=number step=.01 value="${t.r}" oninput="T[S.sel].r=+this.value;up()">
 </div></details>`;tot();lv();nck();fcIpcInit(t);if(S.fx){const q=S.fx;S.fx=null;const el=$((q[1]=='a'?'fxa':'fxl')+q[0]);if(el){el.focus();try{el.select()}catch(x){}}}fcLay()}
+/* Facturas del mes: filtros, siguiente pendiente y resumen */
+let FF='all';
+const fcSt=t=>!t.on||!inc(t)?'no':gen1(t)?'gen':'pen';
+function fcFilt(rk){return FF=='all'?rk:rk.filter(i=>fcSt(T[i])==FF)}
+function fcSetF(v){FF=v;list()}
+function fcNextPend(){const od=fcOrder(),n=od.length,k=Math.max(0,od.indexOf(S.sel));for(let d=1;d<=n;d++){const j=od[(k+d)%n];if(fcSt(T[j])=='pen'){S.sel=j;list();ed();if(innerWidth<=800)window.scrollTo(0,0);else if(innerWidth<=1250){const el=$('ed');if(el&&el.scrollIntoView)el.scrollIntoView({block:'start'})}return}}list();const el=$('fsm');if(el&&el.scrollIntoView)el.scrollIntoView({block:'center'})}
+function fcPendBtn(){return T.some(t=>fcSt(t)=='pen')?'<button type="button" onclick="fcNextPend()">Siguiente pendiente ›</button>':''}
+function fcSum(){const el=$('fsm');if(!el)return;if(!T.length){el.innerHTML='';return}
+const c={pen:0,gen:0,no:0};T.forEach(t=>c[fcSt(t)]++);const N=c.pen+c.gen,gn=T.filter(t=>fcSt(t)=='gen').map(gen1),nE=gn.filter(h=>!h.env).length,nC=gn.filter(h=>!h.cob).length,tp=T.filter(t=>fcSt(t)=='pen').reduce((s,t)=>s+calc(t).tot,0);
+const ch=(v,l,n)=>`<button type="button" class="fchip${FF==v?' on':''}" onclick="fcSetF('${v}')">${l} <b>${n}</b></button>`;
+let msg='';
+if(!N)msg='<span>Este mes no toca facturar ningún local.</span>';
+else if(!c.pen)msg=`<span class="ok">✔ Las ${N} facturas de ${MES[+$('m').value].toLowerCase()} están hechas.</span> `+(nE||nC?`<span>Falta enviar <b>${nE}</b> y cobrar <b>${nC}</b>.</span> `:'<span class="ok">Todo enviado y cobrado.</span> ')+(nE?'<button type="button" onclick="show(\'ema\')">Ir a Correos →</button> ':'')+(nC?'<button type="button" onclick="show(\'cob\')">Ir a Cobros →</button>':'');
+else msg=`<span>Faltan <b>${c.pen}</b> de ${N} por hacer (${f(tp)}).</span> ${fcPendBtn()}`;
+el.innerHTML=`<div class="mh fcsum"><div class="fcmsg">${msg}</div><div class="fchips">${ch('all','Todos',T.length)}${ch('pen','Pendientes',c.pen)}${ch('gen','Generadas',c.gen)}${ch('no','No tocan',c.no)}</div></div>`}
 /* Anterior / siguiente en la generación de facturas (sigue el orden de la lista, con el buscador aplicado) */
 function fcOrder(){return LQ.trim()?lqRank().map(x=>x.i):T.map((t,i)=>i)}
 function fcNavHtml(){const od=fcOrder(),k=od.indexOf(S.sel);if(od.length<2)return'';return `<span class="fm-nav"><button type="button" onclick="fcNav(-1)" title="Local anterior" aria-label="Local anterior" ${k<=0?'disabled':''}>‹</button><small>${k>=0?(k+1)+' de '+od.length:od.length+' locales'}</small><button type="button" onclick="fcNav(1)" title="Local siguiente" aria-label="Local siguiente" ${k>=od.length-1?'disabled':''}>›</button></span>`}
@@ -714,8 +730,8 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=96,BUILD_D='29 oct 2026',VER='2.7.1',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=97,BUILD_D='29 oct 2026',VER='2.8.0',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -783,6 +799,13 @@ const days=d=>Math.round((new Date(d+'T00:00:00')-TODAY)/864e5);
 const dl=n=>n==0?'hoy':n==1?'mañana':n<0?'hace '+(-n)+' d':n<60?'en '+n+' días':n<700?'en '+Math.round(n/30)+' meses':'en '+(n/365).toFixed(1).replace('.',',')+' años';
 const evRow=x=>`<div class="ev"><span class="dt">${fd(x.d)}</span><span class="tx"><span class="tg k-${x.k}">${{ipc:'IPC',renta:'Renta',fin:'Contrato',tarea:'Tarea'}[x.k]}</span>${e(x.t)}</span><span class="dd">${dl(days(x.d))}</span></div>`;
 /* Inicio */
+function dineroHtml(){const Y=TODAY.getFullYear(),HV=Object.values(H),cy=y=>HV.filter(h=>h.cob&&String(h.fc||'').slice(0,4)==String(y)).reduce((a,h)=>a+h.tot,0);
+if(!HV.length)return'';const c0=cy(Y),c1=cy(Y-1),pnd=HV.filter(h=>!h.cob),ym0=Y+String(TODAY.getMonth()+1).padStart(2,'0'),venc=pnd.filter(h=>h.ym<ym0),old=pnd.filter(h=>diasN(h)>30),sinEnv=HV.filter(h=>!h.env&&!h.cob),w=events().filter(x=>days(x.d)>=0&&days(x.d)<=7).length;
+const dif=c1>0?Math.round((c0-c1)/c1*100):null;
+const lk=(go,t,b,s)=>`<div class="cd lk" onclick="show('${go}')"><small>${t}</small><b>${b}</b>${s?`<small>${s}</small>`:''}</div>`;
+return `<div class="mh ik-d"><b>Dinero</b><div class="cards" style="margin:8px 0 0">${lk('cob','Pendiente de cobrar',f(pend()),pnd.length+' factura'+(pnd.length==1?'':'s'))}${lk('cob','De meses anteriores',f(venc.reduce((a,h)=>a+h.tot,0)),venc.length?venc.length+' sin cobrar':'Todo al día')}${lk('cob','Cobrado en '+Y,f(c0),c1>0?(dif>=0?'+':'')+dif+'% frente a '+f(c1)+' en '+(Y-1):(Y-1)+': sin datos')}${lk('cal','Próximos 7 días',w+' aviso'+(w==1?'':'s'),'IPC, rentas y contratos')}</div>
+${old.length||sinEnv.length?`<div style="margin-top:10px">${old.length?`<div class="av w" style="cursor:pointer" onclick="show('cob')">⚠️ ${old.length} factura${old.length==1?'':'s'} con más de 30 días sin cobrar (${f(old.reduce((a,h)=>a+h.tot,0))}) →</div>`:''}${sinEnv.length?`<div class="av w" style="cursor:pointer" onclick="show('ema')">✉️ ${sinEnv.length} factura${sinEnv.length==1?'':'s'} hecha${sinEnv.length==1?'':'s'} sin enviar →</div>`:''}</div>`:''}</div>`}
+function diasN(h){return h.cob?0:Math.round((TODAY-new Date(+h.ym.slice(0,4),+h.ym.slice(4)-1,1))/864e5)}
 function rIni(){const a=T.filter(inc),sum=a.reduce((s,t)=>s+calc(t).tot,0),ev=events().filter(x=>days(x.d)>=0),prox=ev.slice(0,6);
 const av=T.filter(inc).flatMap(t=>[!t.no?t.n+': falta el nº de factura':'',!t.c?t.n+': faltan los datos fiscales':'']).filter(Boolean);
 const gn=a.map(gen1).filter(Boolean),N=a.length,nH=gn.length,nE=gn.filter(h=>h.env).length,nC=gn.filter(h=>h.cob).length,mes=MES[+$('m').value].toLowerCase()+' de '+$('y').value;
@@ -792,7 +815,7 @@ const W=(()=>{try{return avisos().filter(x=>x[0]=='w')}catch(x){return[]}})(),fi
 const urg=W.length||fin.length?`<div class="mh ik-u"><b>Lo urgente</b>${W.slice(0,4).map(x=>`<div class="av w">⚠️ ${x[1]}</div>`).join('')}${W.length>4?`<p style="margin:6px 0 0"><a href="#" onclick="show('fac');return false">Ver los ${W.length} avisos importantes →</a></p>`:''}${fin.map(evRow).join('')}</div>`:`<div class="mh ik-u"><b>Lo urgente</b><p style="margin:6px 0 0" class="ok">✔ Nada urgente ahora mismo.</p></div>`;
 $('v-ini').innerHTML=`<h2>Inicio</h2><p>${TODAY.getDate()} de ${MN[TODAY.getMonth()]} de ${TODAY.getFullYear()}</p>${bkHtml()}${logHtml()}${NMCH.length&&!lsg('fl_nmok')?`<div class="av w" style="margin:0 0 14px"><b>Números de factura ajustados al nuevo formato (serie.año+2 cifras)</b><br>${NMCH.map(c=>e(c.n)+': '+e(c.o)+' → <b>'+e(c.w)+'</b>').join('<br>')}<br><button style="margin-top:6px" onclick="try{LSX.setItem('fl_nmok','1')}catch(x){}rIni()">Entendido</button></div>`:''}
 <div class="mh ik-m"><b>Qué toca en ${mes}</b>${N?bar(nH,N,'Facturas hechas','fac')+(nH?bar(nE,nH,'Enviadas por correo','ema')+bar(nC,nH,'Cobradas','cob'):''):'<p style="margin:6px 0 0">Este mes no hay facturas que hacer.</p>'}${nx?`<p style="margin:10px 0 0"><button class="p" onclick="show('${nx[1]}')">${nx[0]} →</button></p>`:N?`<p style="margin:10px 0 0" class="ok">✔ Todo al día este mes.</p>`:''}</div>
-${urg}
+${dineroHtml()}${urg}
 <div class="cards"><div class="cd lk" onclick="show('fac')"><small>Facturas del mes</small><b>${a.length}</b></div><div class="cd lk" onclick="show('fac')"><small>Total a cobrar (con IVA e IRPF)</small><b>${f(sum)}</b></div><div class="cd lk" onclick="show('cob')"><small>Pendiente de cobrar</small><b>${f(pend())}</b></div><div class="cd lk" onclick="show('cal')"><small>Próximo aviso</small><b style="font-size:15px">${prox[0]?fd(prox[0].d)+' · '+dl(days(prox[0].d)):'-'}</b></div></div>
 ${car0.length?`<p style="margin:-6px 0 14px;font-size:13px;color:var(--ink2)">⏳ En carencia (no suman en el total): ${car0.map(t=>e(t.n)+' ('+e(locOf(t))+') empieza a cobrarse el '+scTxt(t)).join('; ')}.</p>`:''}
 <div class="g" style="margin:0 0 18px"><button onclick="show('fac')">Facturas del mes</button><button onclick="show('cal')">Ver el calendario</button><button onclick="show('nue')">Añadir un local</button></div>
