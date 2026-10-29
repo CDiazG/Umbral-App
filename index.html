@@ -403,6 +403,15 @@ html.dk .dr-av{color:hsl(var(--h) 60% 74%)}
 .dr-form .tb td input:not([type=checkbox]),.dr-form .tb td select{width:100%!important;min-width:0!important}
 .dr-form .tb td:last-child{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;padding-top:6px!important;border-top:1px solid var(--ln)!important}
 .dr-form>p,.dr-form>.tbw~*{display:none}
+</style><style id="fc-css">
+.fm{margin:0 0 12px}
+.tm{box-sizing:border-box;max-width:100%;width:100%}.tm button{min-width:0!important;padding-left:2px!important;padding-right:2px!important;white-space:nowrap}.foot{box-sizing:border-box;max-width:100%}
+.fm-bar{display:flex;align-items:center;justify-content:space-between;gap:8px}.fm-back{display:none;font-weight:600}.fm-mes{margin-left:auto;font-size:12px;color:var(--ink2);text-transform:capitalize}
+.fm-sub{font-size:12px;color:var(--ink2);margin:2px 0 6px}.fm-r{font-size:13px;margin:0 0 4px}
+.fm label{margin-top:10px}.fm .fqa{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px}.fm .fqa button{font-size:12px;padding:4px 10px;min-height:30px;border-radius:999px;background:var(--bls);color:var(--bl);border:1px solid var(--ln)}
+.fm .t{text-align:right;white-space:normal;overflow:visible;margin-top:10px;flex:none}.fm-g{position:sticky;bottom:0;background:var(--sf);padding-top:8px}
+.fd{border:1px solid var(--ln);border-radius:12px;padding:0 14px;margin:0 0 12px;background:var(--sf)}.fd>summary{cursor:pointer;padding:12px 0;font-weight:600}.fd>summary small{font-weight:400;color:var(--ink2);margin-left:6px}.fd .fdi{padding-bottom:14px}
+@media(max-width:800px){body.fone #hd{display:none!important}#v-fac.one>div:first-child{display:none}.fm-back{display:inline-flex}.fm-g{bottom:60px;z-index:5}.fm .x4{grid-template-columns:1fr 92px 60px 34px}}
 </style></head><body>
 <div id="portal"></div>
 <script>
@@ -411,7 +420,8 @@ if(!CO&&/^fx:/.test(window.name))CO=window.name.slice(3);
 var cos=null;try{cos=JSON.parse(localStorage.getItem('fx_cos'))}catch(e){}
 if(!Array.isArray(cos)||!cos.length)cos=[{id:'main',n:'Mi empresa'}];
 window.__COS=cos;
-if(!CO&&cos.length===1)CO=cos[0].id;
+var NA=0;try{NA=sessionStorage.getItem('fx_portal')}catch(e){}
+if(!CO&&cos.length===1&&!NA)CO=cos[0].id;
 if(CO&&cos.some(function(c){return c.id===CO})){window.__CO=CO;try{sessionStorage.setItem('fx_co',CO)}catch(e){}window.name='fx:'+CO;return}
 window.__CO=null;document.body.classList.add("ptl");
 var P=document.getElementById('portal');
@@ -464,8 +474,9 @@ _ks(){const o=[],ls=window.localStorage;for(let i=0;i<ls.length;i++){const k=ls.
 var FBPRE=(function(){var o={p:'',k:'',e:''};try{var m=/[#&]fb=([^&]+)/.exec(location.hash);if(m){var a=decodeURIComponent(m[1]).split('|');o={p:a[0]||'',k:a[1]||'',e:a[2]||''};window.localStorage.setItem('fx_fbpre',JSON.stringify(o));history.replaceState(null,'',location.pathname+location.search)}else{o=JSON.parse(window.localStorage.getItem('fx_fbpre'))||o}}catch(x){}return o})();
 const BASE=(function(){try{return MAIN?(JSON.parse(LSX.getItem('fl_base'))||{}):{}}catch(x){return{}}})();
 const EMPD=BASE.EMPD||{n:'',c:'',d:'',reg:'',bk:[]};
+(function(){try{if(MAIN&&BASE.EMPD&&BASE.EMPD.n){var cs=JSON.parse(localStorage.getItem('fx_cos'))||[],nm=String(BASE.EMPD.n).replace(/\s*\n\s*/g,' '),m=cs.find(function(c){return c.id==='main'});if(!m)cs.unshift({id:'main',n:nm});else if(m.n==='Mi empresa')m.n=nm;else return;localStorage.setItem('fx_cos',JSON.stringify(cs))}}catch(x){}})();
 const EMP=Object.assign({},MAIN?EMPD:{n:CONAME,c:'',d:'',reg:'',bk:[]});try{Object.assign(EMP,JSON.parse(LSX.getItem('fl_emp'))||{})}catch(x){}
-function cambiarEmpresa(){try{sessionStorage.removeItem('fx_co')}catch(x){}window.name='';location.reload()}
+function cambiarEmpresa(){try{sessionStorage.removeItem('fx_co');sessionStorage.setItem('fx_portal','1')}catch(x){}window.name='';location.reload()}
 (function(){const n=document.getElementById('coN');if(n)n.textContent=CONAME;document.title='Umbral · '+CONAME})();
 window.alert=function(m){let b=document.getElementById('toast');if(!b){b=document.createElement('div');b.id='toast';b.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);max-width:92vw;background:#071a1e;color:#fff;padding:12px 16px;border-radius:8px;z-index:99;box-shadow:0 4px 16px rgba(0,0,0,.4);cursor:pointer';b.onclick=()=>{b.hidden=true};document.body.appendChild(b)}b.textContent=m;b.hidden=false;clearTimeout(b._t);b._t=setTimeout(()=>{b.hidden=true},9000)};
 const MES=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
@@ -548,11 +559,23 @@ const F=[[lqN(t.n),3],[lqN(locOf(t)),3],[lqN(String(t.k).split('|').join(' ')),2
 for(const [w] of toks){if(LQSTOP.has(w)&&toks.length>1)continue;let best=0;for(const [ws,wt,full] of words){for(const x of ws){let p=0;if(x==w)p=3;else if(x.startsWith(w))p=2.4;else if(/^\d+$/.test(w))p=0;else if(w.length>=4&&x.length>=4&&lqLev(x,w)<=(w.length>=7?2:1))p=1.6;else if(w.length>=3&&x.includes(w))p=1.4;if(p)best=Math.max(best,p*wt)}if(w.length>=3&&full.includes(w))best=Math.max(best,1.2*wt)}if(!best)return 0;tot+=best}
 return tot}
 function lqRank(){return T.map((t,i)=>({i,s:lqScore(t,LQ)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s||a.i-b.i)}
-function lqGo(){const r=lqRank();if(!r.length)return;S.sel=r[0].i;list();ed()}
-function list(){const rk=LQ.trim()?lqRank().map(x=>x.i):T.map((t,i)=>i),li=$('lqi');if(li)li.textContent=LQ.trim()?(rk.length?rk.length+(rk.length==1?' resultado':' resultados')+' · Intro abre el primero':'Ningún local coincide'):'';$('list').innerHTML=rk.map(i=>{const t=T[i];return `<div class="r ${i==S.sel?'a':''}" ${car(t)?'style="opacity:.6" ':''}onclick="S.sel=${i};list();ed()"><input type=checkbox ${t.on?'checked':''} onclick="event.stopPropagation();T[${i}].on=this.checked;save()"><span>${e(t.n)}<small>${e(locOf(t))} · ${t.no||'sin nº'}${car(t)?' · <b class=wn2>Sin cobrar hasta '+scTxt(t)+'</b>':due(t)?'':' · no toca este mes'}${gen1(t)?' · <b class=ok>✔ ya generada</b>':''}</small></span><b>${car(t)?'—':f(calc(t).tot)}</b></div>`}).join('')}
+function lqGo(){const r=lqRank();if(!r.length)return;fcOne(r[0].i)}
+function list(){const rk=LQ.trim()?lqRank().map(x=>x.i):T.map((t,i)=>i),li=$('lqi');if(li)li.textContent=LQ.trim()?(rk.length?rk.length+(rk.length==1?' resultado':' resultados')+' · Intro abre el primero':'Ningún local coincide'):'';$('list').innerHTML=rk.map(i=>{const t=T[i];return `<div class="r ${i==S.sel?'a':''}" ${car(t)?'style="opacity:.6" ':''}onclick="fcOne(${i})"><input type=checkbox ${t.on?'checked':''} onclick="event.stopPropagation();T[${i}].on=this.checked;save()"><span>${e(t.n)}<small>${e(locOf(t))} · ${t.no||'sin nº'}${car(t)?' · <b class=wn2>Sin cobrar hasta '+scTxt(t)+'</b>':due(t)?'':' · no toca este mes'}${gen1(t)?' · <b class=ok>✔ ya generada</b>':''}</small></span><b>${car(t)?'—':f(calc(t).tot)}</b></div>`}).join('')}
 function tot(){const t=T[S.sel];if(!t||!$('tt'))return;const c=calc(t);$('tt').innerHTML=`<div>Base imponible: ${f(c.base)}</div><div>IVA 21%: +${f(c.iva)}</div><div>IRPF 19%: -${f(c.irpf)}</div><div><b>Total a pagar: ${f(c.tot)}</b></div>`}
 function up(){list();tot();save()}
-function ed(){const t=T[S.sel];if(t){try{recAdd(t.k);renderRecs()}catch(x){}}if(!t){$('ed').innerHTML='<h3 style="margin:0">Todavía no hay locales</h3><p>Esta empresa está vacía. Añade el primer local para empezar a facturar.</p><button class=p onclick="nw()">+ Añadir local</button>';return}$('ed').innerHTML=`<h3 style="margin:0;display:flex;gap:10px;align-items:center;flex-wrap:wrap">${e(t.n)} <button type="button" onclick="verPan(S.sel)" title="Gráficos y datos de este inquilino" style="font-size:12px;padding:4px 10px;min-height:28px">📊 Panel</button></h3><small style="color:#47676a">Los campos están bloqueados. Pulsa «✏️ Editar» para poder cambiarlos.</small>
+function ed(){const t=T[S.sel];if(t){try{recAdd(t.k);renderRecs()}catch(x){}}if(!t){$('ed').innerHTML='<h3 style="margin:0">Todavía no hay locales</h3><p>Esta empresa está vacía. Añade el primer local para empezar a facturar.</p><button class=p onclick="nw()">+ Añadir local</button>';return}$('ed').innerHTML=`<div class="fm"><div class="fm-bar"><button type="button" class="fm-back" onclick="fcBack()">← Locales</button><span class="fm-mes">${MES[+$('m').value]} ${$('y').value}</span></div>
+<h3 style="margin:6px 0 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap">${e(t.n)} <button type="button" onclick="verPan(S.sel)" title="Gráficos y datos de este inquilino" style="font-size:12px;padding:4px 10px;min-height:28px">📊 Panel</button></h3>
+<div class="fm-sub">${e(locOf(t))} · ${t.no||'sin nº'}${car(t)?' · <b class=wn2>Sin cobrar hasta '+scTxt(t)+'</b>':due(t)?'':' · <b class=wn2>no toca este mes</b>'}${gen1(t)?' · <b class=ok>✔ ya generada</b>':''}</div>
+<div class="fm-r">Renta ${t.q?'reducida':'del contrato'}: <b>${f(t.q?t.red:t.r)}</b></div>
+<label><input type=checkbox style="width:auto" ${t.q?'checked':''} onchange="T[S.sel].q=this.checked;up();ed()"> Aplicar reducción de renta este mes (desmárcalo cuando deje de aplicarse)</label>
+${t.q?`<label>Renta reducida (€)</label><input type=number step=.01 value="${t.red}" oninput="T[S.sel].red=+this.value;up()">
+<label>Cláusula de la reducción ({RED}, {M} y {A} se rellenan solos)</label><textarea rows=3 oninput="T[S.sel].ct=this.value;save()">${e(t.ct)}</textarea>`:''}
+<label>Gastos de este mes (IBI, comunidad, etc.; llevan IVA e IRPF)</label>
+${t.x.map((x,j)=>`<div class="x x4"><input id="fxl${j}" value="${e(x[0])}" oninput="T[S.sel].x[${j}][0]=this.value;save()"><input id="fxa${j}" type=number step=.01 inputmode="decimal" value="${x[1]}" oninput="T[S.sel].x[${j}][1]=+this.value;up()"><label title="Marca si el gasto se repite cada mes; si no, se puede quitar al cambiar de mes"><input type=checkbox ${isRec(x)?'checked':''} onchange="T[S.sel].x[${j}][2]=this.checked;save()">repite</label><button type="button" class="lkx" onclick="T[S.sel].x.splice(${j},1);ed();up()">✕</button></div>`).join('')}
+<div class="fqa"><button type="button" onclick="fcAddX('IBI')">+ IBI</button><button type="button" onclick="fcAddX('Gastos de comunidad')">+ Comunidad</button><button type="button" onclick="fcAddX('Basuras')">+ Basuras</button><button type="button" onclick="fcAddX('')">+ Otro gasto</button></div>
+<div class=t id=tt></div>
+<div class="g fm-g"><button onclick="pvw(S.sel)">Vista previa</button><button class=p onclick="one()">Descargar PDF de esta factura</button></div></div>
+<details class="fd" ${UNL.has('e'+S.sel)?'open':''}><summary>Datos del local y de la factura <small>nº, concepto, cliente, renta, forma de pago…</small></summary><div class="fdi"><small style="color:#47676a">Los campos están bloqueados. Pulsa «✏️ Editar» para poder cambiarlos.</small>
 <label>Nombre del local</label><input value="${e(locOf(t))}" oninput="T[S.sel].loc=this.value.toUpperCase();save();list()">
 <label>Nº de factura (1-3 letras o cifras, punto, año y 2 cifras)</label><input data-v="no" value="${e(t.no)}" oninput="T[S.sel].no=this.value;up();nck()"><div id="nk" style="font-size:12px;margin-top:3px"></div>
 <label>Comparte la serie de factura con otro local (por ejemplo, los garajes con sus apartamentos)</label><select onchange="T[S.sel].gr=this.value;save();nck()"><option value="-" ${t.gr==='-'||(!t.gr&&!GRPK[t.k])?'selected':''}>Ninguno: serie propia</option>${T.filter(o=>o.k!==t.k).map(o=>`<option value="${e(o.k)}" ${(t.gr||GRPK[t.k])===o.k&&t.gr!=='-'?'selected':''}>${e(o.n)} · ${e(locOf(o))}</option>`).join('')}</select>
@@ -567,15 +590,9 @@ function ed(){const t=T[S.sel];if(t){try{recAdd(t.k);renderRecs()}catch(x){}}if(
 ${(t.fr||'M')!='M'?`<label>Primer mes de facturación (después se repite cada ${t.fr=='T'?'3 meses':'año'})</label><select onchange="T[S.sel].fm=+this.value;save();list()">${MN.map((m,i)=>`<option value="${i+1}" ${(t.fm||1)==i+1?'selected':''}>${m}</option>`).join('')}</select><small style="color:#47676a">Usa {TRIM} o {PERIODO} en el concepto para que los meses se pongan solos.</small>`:''}
 <label>Texto de la renta</label><input value="${e(t.l)}" oninput="T[S.sel].l=this.value;save()">
 <label>Renta (€)</label><input type=number step=.01 value="${t.r}" oninput="T[S.sel].r=+this.value;up()">
-<label><input type=checkbox style="width:auto" ${t.q?'checked':''} onchange="T[S.sel].q=this.checked;up();ed()"> Aplicar reducción de renta este mes (desmárcalo cuando deje de aplicarse)</label>
-${t.q?`<label>Renta reducida (€)</label><input type=number step=.01 value="${t.red}" oninput="T[S.sel].red=+this.value;up()">
-<label>Cláusula de la reducción ({RED}, {M} y {A} se rellenan solos)</label><textarea rows=3 oninput="T[S.sel].ct=this.value;save()">${e(t.ct)}</textarea>`:''}
-<label>Gastos adicionales (IBI, comunidad, etc.; llevan IVA e IRPF)</label>
-${t.x.map((x,j)=>`<div class="x x4"><input value="${e(x[0])}" oninput="T[S.sel].x[${j}][0]=this.value;save()"><input type=number step=.01 value="${x[1]}" oninput="T[S.sel].x[${j}][1]=+this.value;up()"><label title="Marca si el gasto se repite cada mes; si no, se puede quitar al cambiar de mes"><input type=checkbox ${isRec(x)?'checked':''} onchange="T[S.sel].x[${j}][2]=this.checked;save()">repite</label><button class="lkx" onclick="T[S.sel].x.splice(${j},1);ed();up()">✕</button></div>`).join('')}
-<button class="lkx" onclick="T[S.sel].x.push(['',0]);ed()">+ Añadir gasto</button>
-<div class=t id=tt></div>
-<div class=g><button onclick="pvw(S.sel)">Vista previa</button><button class=p onclick="one()">Descargar PDF de esta factura</button></div>`;tot();lv();nck()}
-function nw(){UNL.add('e'+T.length);T.push({k:'NUEVO|LOCAL NUEVO',no:'',n:'NUEVO CLIENTE (completar)',c:'',d:'',t:'Arrendamiento local (completar). '+M_,b:0,l:'RENTA',r:0,x:[],on:true,q:false,red:0,ct:''});S.sel=T.length-1;up();ed();$('ed').scrollIntoView()}
+</div></details>`;tot();lv();nck();if(S.fx){const q=S.fx;S.fx=null;const el=$((q[1]=='a'?'fxa':'fxl')+q[0]);if(el){el.focus();try{el.select()}catch(x){}}}fcLay()}
+function fcAddX(l){const t=T[S.sel];if(!t)return;t.x.push([l,0]);S.fx=[t.x.length-1,l?'a':'l'];ed();up()}
+function nw(){S.one=1;UNL.add('e'+T.length);T.push({k:'NUEVO|LOCAL NUEVO',no:'',n:'NUEVO CLIENTE (completar)',c:'',d:'',t:'Arrendamiento local (completar). '+M_,b:0,l:'RENTA',r:0,x:[],on:true,q:false,red:0,ct:''});S.sel=T.length-1;up();ed();$('ed').scrollIntoView()}
 function clr(b){if(b.dataset.s!='1'){b.dataset.s='1';b.textContent='¿Seguro? Pulsa otra vez';return}T.forEach(t=>t.x=t.x.filter(isRec));b.dataset.s='';b.textContent='Quitar gastos puntuales';ed();up()}
 async function load(file){if(!file)return;const wb=XLSX.read(await file.arrayBuffer());const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});let n=0;
 rows.forEach(r=>{const k=String(r[5]||'').trim().toUpperCase()+'|'+String(r[6]||'').trim().toUpperCase();const t=T.find(t=>t.k===k);if(t&&typeof r[10]==='number'){t.r=r2(r[10]);n++}});
@@ -634,7 +651,7 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>rGen(),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=68,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
+const BUILD=69,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+BUILD:'En línea · v'+BUILD;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -663,8 +680,8 @@ function toggleRail(){try{window.localStorage.setItem('fx_rail',lsx('fx_rail')==
 function sect(id){let el=$('v-'+id);if(!el){el=document.createElement('section');el.className='v';el.id='v-'+id;el.hidden=true;$('content').appendChild(el)}return el}
 function mnu(){document.body.classList.toggle('mo')}
 function bnavOn(){document.querySelectorAll('#bnav button[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==CUR))}
-function show(v){CUR=v;document.body.classList.remove('mo');setTimeout(()=>{window.scrollTo(0,0);bnavOn()},0);document.querySelectorAll('.v').forEach(x=>x.hidden=true);$('v-fac').hidden=v!='fac';if(v!='fac')sect(v).hidden=false;$('hd').hidden=v!='fac';buildMenu();bcRender();
-if(VIEWS[v])VIEWS[v]();else rCp(v);scrollTo(0,0)}
+function show(v){CUR=v;if(v!='fac')S.one=0;document.body.classList.remove('mo');setTimeout(()=>{window.scrollTo(0,0);bnavOn()},0);document.querySelectorAll('.v').forEach(x=>x.hidden=true);$('v-fac').hidden=v!='fac';if(v!='fac')sect(v).hidden=false;$('hd').hidden=v!='fac';buildMenu();bcRender();
+if(VIEWS[v])VIEWS[v]();else rCp(v);try{fcLay()}catch(x){}scrollTo(0,0)}
 /* ===== Botón «atrás» del móvil: vuelve a la pantalla anterior en lugar de salir ===== */
 (function(){if(window.claude||!window.history||!history.pushState)return;
 const s0=show;let first=true,pop=false,last=null;
@@ -677,8 +694,13 @@ show=function(v){
   first=false;last=v;pop=false;return s0.apply(this,arguments)};
 window.addEventListener('popstate',function(e){const st=e.state;if(!st||!st.v||!document.getElementById('v-'+st.v)&&st.v!='fac')return;
   const m=document.getElementById('gdm')||document.getElementById('clm');
-  pop=true;try{if(st.v=='pan'&&st.i!=null&&T[st.i])PAN.i=st.i;show(st.v)}catch(x){pop=false}});
+  pop=true;try{S.one=st.v=='fac'&&st.one?1:0;if(st.v=='pan'&&st.i!=null&&T[st.i])PAN.i=st.i;show(st.v)}catch(x){pop=false}});
 })();
+/* ===== Factura de un local: se abre directamente (en el móvil ocupa toda la pantalla) ===== */
+function fcLay(){const on=!!S.one&&innerWidth<=800&&CUR=='fac';const v=$('v-fac');if(v)v.classList.toggle('one',on);document.body.classList.toggle('fone',on)}
+function fcOne(i){S.sel=i;S.one=1;try{if(!window.claude&&history.pushState)history.pushState({v:'fac',one:1},'')}catch(x){}list();ed();fcLay();if(innerWidth<=800)window.scrollTo(0,0);else if(innerWidth<=1250){const el=$('ed');if(el&&el.scrollIntoView)el.scrollIntoView({block:'start'})}}
+function fcBack(){try{if(!window.claude&&history.state&&history.state.one){history.back();return}}catch(x){}S.one=0;fcLay();list()}
+window.addEventListener('resize',fcLay);
 function rCp(id){const c=CP.find(x=>x.id==id),el=sect(id);if(!c){el.innerHTML='<p>Apartado no encontrado.</p>';return}
 el.innerHTML=c.tipo=='enlace'?`<h2>${e(c.t)}</h2><p>${e(c.x)}</p><p><a href="${e(c.u)}" target="_blank" rel="noopener"><button class="p">Abrir enlace</button></a></p>`:`<h2>${e(c.t)}</h2><p>Notas libres. Se guardan solas.</p><textarea id="cpx" rows="16" style="width:100%" oninput="CP.find(x=>x.id=='${id}').x=this.value;scp()">${e(c.x||'')}</textarea>`}
 const MN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -1301,12 +1323,13 @@ cv.style.cssText='width:min(100%,640px);height:auto;background:#fff;box-shadow:0
 function lockAll(){document.querySelectorAll('[data-lk],#ed').forEach(box=>{
 let key=box.id=='ed'?'e'+S.sel:box.dataset.lk;if(box.id=='ed'&&!box.firstElementChild)return;
 const un=UNL.has(key);
-box.querySelectorAll('input,textarea,select,button.lkx').forEach(x=>{if(x.disabled===un)x.disabled=!un});
+box.querySelectorAll('input,textarea,select,button.lkx').forEach(x=>{if(x.closest&&x.closest('.fm'))return;if(x.disabled===un)x.disabled=!un});
 let b=box.querySelector('.lkb');
 if(!b){b=document.createElement('button');b.className='lkb';b.type='button';
-if(box.id=='ed'){const w=document.createElement('div');w.className='lkh';w.appendChild(b);box.insertBefore(w,box.firstChild)}
+if(box.id=='ed'){const w=document.createElement('div');w.className='lkh';w.appendChild(b);const tg=box.querySelector('.fdi')||box;tg.insertBefore(w,tg.firstChild)}
 else{const tds=box.querySelectorAll('td');tds[tds.length-1].insertBefore(b,tds[tds.length-1].firstChild);b.after(document.createTextNode(' '))}}
 b.onclick=()=>{const k=box.id=='ed'?'e'+S.sel:box.dataset.lk;if(UNL.has(k)){chgEnd(k);UNL.delete(k)}else{chgBeg(k);UNL.add(k)}lockAll()};
+if(un&&box.id=='ed'){const dd=box.querySelector('details.fd');if(dd&&!dd.open&&!dd.dataset.o){dd.open=true}}
 const tx=un?'✔ Listo':'✏️ Editar';if(b.textContent!==tx){b.textContent=tx;b.classList.toggle('on',un)}
 b.title=un?'Terminar y volver a bloquear los campos':'Desbloquear los campos para editarlos'})}
 new MutationObserver(()=>{clearTimeout(window._lt);window._lt=setTimeout(lockAll,0)}).observe(document.body,{childList:true,subtree:true});
