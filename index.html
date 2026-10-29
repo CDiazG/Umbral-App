@@ -651,7 +651,7 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>rGen(),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=72,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
+const BUILD=73,BUILD_D='29 oct 2026',OFFL=location.protocol==='file:';
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+BUILD:'En línea · v'+BUILD;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -1856,9 +1856,10 @@ return `<div class="dr-c${vac?' vac':''}" role="button" tabindex="0" data-i="${i
 <div class="dr-ch"><span class="tp-chip ${est[0]}">${e(est[1])}</span>${ct}</div>
 ${it.pc!=null&&!vac?`<div class="tp-pr dr-pr" title="${Math.round(it.pc)} % del contrato transcurrido"><i style="width:${it.pc.toFixed(1)}%"></i></div>`:''}
 ${vac?`<div class="dr-ch"><button onclick="event.stopPropagation();NS.i=${i};show('nue')">Añadir inquilino</button></div>`:''}</div>`}
-function dirList(){const m=DIR.m,q=norm(DIR.q),hoy=tpHoy(),idx={};
+function dirList(){try{dirList1()}catch(x){const l=$('dr_l');if(l)l.innerHTML='<p class="tp-vac" style="grid-column:1/-1">No se pudo mostrar la lista: '+e(String(x&&x.message||x))+'</p>';try{console.error(x)}catch(_){}}}
+function dirList1(){const m=DIR.m,q=norm(DIR.q),hoy=tpHoy(),idx={};
 Object.values(H).forEach(h=>{const o=idx[h.k+'|'+h.n]=idx[h.k+'|'+h.n]||{pen:0,venc:0,nv:0,n:0};o.n++;if(!h.cob){o.pen+=h.tot;if(h.ym<hoy){o.venc+=h.tot;o.nv++}}});
-const all=T.map((t,i)=>dirInfo(t,i,idx)),cnt=f=>all.filter(it=>dirFilt(it,f)).length;
+const all=T.map((t,i)=>{try{return dirInfo(t,i,idx)}catch(x){return{t,i,vac:!!t.vac,x:{pen:0,venc:0,nv:0,n:0},fin:'',rest:null,pc:null,car:false,on:!!t.on}}}),cnt=f=>all.filter(it=>dirFilt(it,f)).length;
 const L=all.filter(it=>dirFilt(it,DIR.f)&&(!q||norm(locOf(it.t)+' '+it.t.n+' '+(it.t.c||'')+' '+em(it.t)).includes(q)));
 const so={loc:(a,b)=>locOf(a.t).localeCompare(locOf(b.t),'es'),nom:(a,b)=>String(a.t.n).localeCompare(String(b.t.n),'es'),ren:(a,b)=>rentM(b.t)-rentM(a.t),pen:(a,b)=>b.x.pen-a.x.pen,fin:(a,b)=>(a.rest==null?9999:a.rest)-(b.rest==null?9999:b.rest)}[DIR.s]||(()=>0);
 L.sort(so);
@@ -1866,7 +1867,7 @@ const occ=all.filter(it=>!it.vac&&it.on),mes=occ.reduce((s,it)=>s+(it.t.r>0?rent
 const chips=[['all','Todos'],['occ','Ocupados'],['vac','Vacíos'],['pen','Con pendiente'],['car','En carencia'],['fin','Contrato ≤ 12 meses'],['off','Sin facturar']].map(([k,l])=>{const n=cnt(k);return(k=='all'||n>0||DIR.f==k)?`<button class="dr-f${DIR.f==k?' on':''}" onclick="DIR.f='${k}';dirList()">${l}<i>${n}</i></button>`:''}).join('');
 $('dr_s').innerHTML=`<b>${T.length}</b> ${T.length==1?'local':'locales'} · <b>${all.filter(it=>it.vac).length}</b> vacíos · renta mensual de los ocupados <b>${eu0(mes)}</b>`;
 $('dr_f').innerHTML=chips;
-$('dr_l').innerHTML=L.length?L.map(it=>dirCard(it,m)).join(''):`<p class="tp-vac" style="grid-column:1/-1">Ningún ${m=='loc'?'local':'inquilino'} coincide con ese filtro.</p>`}
+$('dr_l').innerHTML=L.length?L.map(it=>{try{return dirCard(it,m)}catch(x){return '<div class="dr-c"><div class="dr-nm"><b>'+e(String(it.t&&(it.t.n||it.t.k)))+'</b><small>No se pudo mostrar</small></div></div>'}}).join(''):`<p class="tp-vac" style="grid-column:1/-1">Ningún ${m=='loc'?'local':'inquilino'} coincide con ese filtro.</p>`}
 function rDir(m){if(DIR.m!==m){DIR.q='';DIR.f='all'}DIR.m=m;const el=$('v-'+m),loc=m=='loc';if(!['loc','nom','ren','pen','fin'].includes(DIR.s))DIR.s='loc';
 el.innerHTML=`<div class="dr"><div class="dr-h"><div><h2>${loc?'Locales':'Inquilinos'}</h2><p class="tp-sub" id="dr_s" style="margin:0"></p></div><div class="dr-ac">${loc?`<button class="p" onclick="NS.i=null;show('nue')">+ Nuevo local</button>`:''}<button onclick="dirSet('b')" title="Ver todo en una tabla editable">Vista de tabla</button></div></div>
 <div class="dr-q"><input type="search" id="dr_q" placeholder="Buscar por local, inquilino, CIF o email" value="${e(DIR.q)}" oninput="DIR.q=this.value;dirList()" autocomplete="off"><select onchange="DIR.s=this.value;dirList()" aria-label="Ordenar"><option value="loc">Ordenar: local</option><option value="nom">Ordenar: inquilino</option><option value="ren">Ordenar: renta (mayor primero)</option><option value="pen">Ordenar: pendiente de cobro</option><option value="fin">Ordenar: fin de contrato</option></select></div>
