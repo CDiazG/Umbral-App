@@ -731,8 +731,8 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=113,BUILD_D='30 oct 2026',VER='2.10.14',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12',112:'2.10.13',113:'2.10.14'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=115,BUILD_D='30 oct 2026',VER='2.10.16',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12',112:'2.10.13',113:'2.10.14',114:'2.10.15',115:'2.10.16'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -791,7 +791,14 @@ const TODAY=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().g
 /* Eventos tomados de la lectura de los 24 contratos. Las fechas de IPC son la fecha de aplicación; el INE publica el índice más tarde. */
 const EV0=BASE.EV0||[];
 if(!MAIN)EV0.length=0;
+const REC=BASE.REC||[];
+if(!MAIN)REC.length=0;
 function events(){const out=EV0.map(e=>({d:e[0],k:e[1],t:e[2]}));
+try{const ty=TODAY.getFullYear(),hz=ty+8,td=iso(TODAY),skp={'NUEVO CENTRO':['2027-01','2032-01']},fin1=t=>{const m=String(cdOf(t)[1]||'').match(/(\d{2})\/(\d{2})\/(\d{4})/);return m?m[3]+'-'+m[2]+'-'+m[1]:''};
+IR.forEach(r=>{const t=T.find(x=>x.on&&!x.vac&&x.k.startsWith(r[0]));if(!t||!MAIN)return;const fn=fin1(t),nt=String(r[2]||'');
+for(let y=ty;y<=hz;y++){const k=kn(y,r[1]),d=k+'-01';if(k<r[4]||d<td||(fn&&d>fn)||(skp[r[0]]||[]).includes(k))continue;
+out.push({d,k:'ipc',t:'Actualización IPC: '+t.n+' ('+locOf(t)+')'+(nt&&nt.length<=100&&!/^(Primer|Renta fija|Regla creada|IPC cada)/.test(nt)?' · '+nt:'')})}});
+REC.forEach(q=>{const t=T.find(x=>x.on&&!x.vac&&x.k.startsWith(q[0]));if(t)for(let y=ty;y<=hz;y++){const d=kn(y,q[1])+'-01';if(d>=td)out.push({d,k:q[2],t:q[3]})}})}catch(x){}
 for(let i=0;i<12;i++){const d=new Date(TODAY.getFullYear(),TODAY.getMonth()+i,25);if(d>=TODAY)out.push({d:iso(d),k:'tarea',t:'Preparar las facturas de '+MN[(d.getMonth()+1)%12]+' (cobros del mes)'})}
 try{(JSON.parse(LSX.getItem('fl_ev'))||[]).forEach(e=>out.push(e))}catch(x){}
 try{const ti=tokInfo();if(ti&&ti.d>=-30)out.push({d:ti.exp,k:'tarea',t:'Renovar el token de GitHub (actualizaciones automáticas)'})}catch(x){}
