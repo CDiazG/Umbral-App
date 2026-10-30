@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>(function(){var mq=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)");function ap(){var t="auto";try{t=localStorage.getItem("fx_tema")||"auto"}catch(e){}if(t!=="claro"&&t!=="oscuro")t="auto";window.__tema=t;document.documentElement.classList.toggle("dk",t==="oscuro"||(t==="auto"&&!!mq&&mq.matches))}window.setTema=function(t){try{localStorage.setItem("fx_tema",t)}catch(e){}ap();if(window.buildMenu)try{buildMenu()}catch(e){}};ap();if(mq&&mq.addEventListener)mq.addEventListener("change",ap)})();</script>
-<title>Gestión de alquileres - Umbral</title><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#36719F"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Umbral"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png">
+<title>Umbral</title><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#36719F"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Umbral"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -522,7 +522,7 @@ const EMPD=BASE.EMPD||{n:'',c:'',d:'',reg:'',bk:[]};
 const EMP=Object.assign({},MAIN?EMPD:{n:CONAME,c:'',d:'',reg:'',bk:[]});try{Object.assign(EMP,JSON.parse(LSX.getItem('fl_emp'))||{})}catch(x){}
 /*REGF*/if(MAIN&&!String(EMP.reg||'').trim()&&EMPD.reg)EMP.reg=EMPD.reg;
 function cambiarEmpresa(){try{sessionStorage.removeItem('fx_co');sessionStorage.setItem('fx_portal','1')}catch(x){}window.name='';location.reload()}
-(function(){const n=document.getElementById('coN');if(n)n.textContent=CONAME;document.title='Umbral · '+CONAME})();
+(function(){const n=document.getElementById('coN');if(n)n.textContent=CONAME;document.title='Umbral'})();
 window.alert=function(m){let b=document.getElementById('toast');if(!b){b=document.createElement('div');b.id='toast';b.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);max-width:92vw;background:#071a1e;color:#fff;padding:12px 16px;border-radius:8px;z-index:99;box-shadow:0 4px 16px rgba(0,0,0,.4);cursor:pointer';b.onclick=()=>{b.hidden=true};document.body.appendChild(b)}b.textContent=m;b.hidden=false;clearTimeout(b._t);b._t=setTimeout(()=>{b.hidden=true},9000)};
 const MES=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
 const BK=EMP.bk.length?EMP.bk.map(x=>x[1]):['(sin cuenta configurada)'];
@@ -731,8 +731,8 @@ const scp=()=>{try{LSX.setItem('fl_cp',JSON.stringify(CP))}catch(x){}};
 const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=>rReg(),loc:()=>dirGo('loc'),ctn:()=>rCtn(),esp:()=>rEsp(),exp:()=>rExp(),gen:()=>show('fac'),ini:()=>rIni(),cal:()=>rCal(),inq:()=>dirGo('inq'),con:()=>rCon(),nue:()=>rNue(),aju:()=>rAju(),cob:()=>rCob(),ale:()=>rAle(),ipc:()=>rIpc(),ema:()=>rEma(),res:()=>rRes(),fac:()=>{list();ed();fmPanel()}};
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
-const BUILD=111,BUILD_D='30 oct 2026',VER='2.10.12',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=112,BUILD_D='30 oct 2026',VER='2.10.13',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12',112:'2.10.13'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -1981,19 +1981,19 @@ function upRender(){let o=document.getElementById('upm');if(o)o.remove();o=docum
 const nuevo=UP.nb>BUILD;
 o.innerHTML=`<div style="background:#fff;border-radius:8px;max-width:620px;width:100%;padding:16px 18px;box-shadow:0 4px 24px rgba(0,0,0,.4)"><h2 style="margin:0 0 6px;font-size:18px">⬆ Actualizar programa</h2>
 <p style="margin:0 0 8px">Versión instalada: <b>${VER}</b> (${e(BUILD_D)}). Tus datos no se tocan al actualizar.</p>
-${UPOK?`<ol style="margin:0 0 10px;padding-left:20px"><li>Guarda en tu ordenador el archivo nuevo que te envíe Claude («Gestion de alquileres.html», normalmente en Descargas).</li><li>Pulsa «Elegir archivo nuevo» y selecciónalo.</li><li>Pulsa «Instalar». La primera vez, elige tu archivo del programa instalado y confirma «Reemplazar».</li></ol>
+${UPOK?`<ol style="margin:0 0 10px;padding-left:20px"><li>Guarda en tu ordenador el archivo nuevo que te envíe Claude («Umbral.html», normalmente en Descargas).</li><li>Pulsa «Elegir archivo nuevo» y selecciónalo.</li><li>Pulsa «Instalar». La primera vez, elige tu archivo del programa instalado y confirma «Reemplazar».</li></ol>
 ${UP.msg?`<p class="${/^✔/.test(UP.msg)?'ok':'wn2'}"><b>${e(UP.msg)}</b></p>`:''}
 ${UP.nb?(nuevo?`<p class="ok"><b>Versión nueva lista: ${vf(UP.nb)}</b> (${e(UP.nd)}).</p>`:`<p class="wn2">Ese archivo es la versión ${vf(UP.nb)}: no es más nueva que la instalada.</p>`):''}
 <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="up1">Elegir archivo nuevo…</button>${nuevo?'<button id="up2" class="p">Instalar versión '+vf(UP.nb)+'</button>':''}${UP.prev?'<button id="up3">Volver a la versión '+vf(UP.prev.b)+'</button>':''}<button id="up0">Cerrar</button></div>`
-:`<p>Tu navegador no permite actualizar desde aquí. Sustituye a mano el archivo «Gestion de alquileres.html» de tu carpeta por el nuevo (usa Chrome o Edge para poder hacerlo con este botón).</p><div><button id="up0" class="p">Cerrar</button></div>`}</div>`;
+:`<p>Tu navegador no permite actualizar desde aquí. Sustituye a mano el archivo «Umbral.html» de tu carpeta por el nuevo (usa Chrome o Edge para poder hacerlo con este botón).</p><div><button id="up0" class="p">Cerrar</button></div>`}</div>`;
 document.body.appendChild(o);$('up0').onclick=()=>o.remove();
-if($('up1'))$('up1').onclick=async()=>{try{const [h]=await showOpenFilePicker({startIn:'downloads',types:[{description:'Programa (HTML)',accept:{'text/html':['.html','.htm']}}]});const t=await (await h.getFile()).text(),i=upInfo(t);if(!i){UP.txt='';UP.nb=0;UP.msg='Ese archivo no es una versión de escritorio válida. Usa «Gestion de alquileres.html», el que te envía Claude.';}else{UP.txt=t;UP.nb=i.b;UP.nd=i.d;UP.msg=''}upRender()}catch(x){if(x&&x.name!=='AbortError'){UP.msg='No se pudo leer el archivo: '+(x.message||x);upRender()}}};
+if($('up1'))$('up1').onclick=async()=>{try{const [h]=await showOpenFilePicker({startIn:'downloads',types:[{description:'Programa (HTML)',accept:{'text/html':['.html','.htm']}}]});const t=await (await h.getFile()).text(),i=upInfo(t);if(!i){UP.txt='';UP.nb=0;UP.msg='Ese archivo no es una versión de escritorio válida. Usa «Umbral.html», el que te envía Claude.';}else{UP.txt=t;UP.nb=i.b;UP.nd=i.d;UP.msg=''}upRender()}catch(x){if(x&&x.name!=='AbortError'){UP.msg='No se pudo leer el archivo: '+(x.message||x);upRender()}}};
 if($('up2'))$('up2').onclick=()=>upInstall(UP.txt,UP.nb,false);
 if($('up3'))$('up3').onclick=()=>upInstall(UP.prev.t,UP.prev.b,true)}
 async function upInstall(txt,nb,back){try{let h=null;try{h=await upKv('get','prog')}catch(x){}
 if(h&&(await h.queryPermission({mode:'readwrite'}))!=='granted'){if((await h.requestPermission({mode:'readwrite'}))!=='granted')h=null}
-if(!h){h=await showSaveFilePicker({suggestedName:'Gestion de alquileres.html',types:[{description:'Programa (HTML)',accept:{'text/html':['.html']}}]})}
-const cur=await (await h.getFile()).text();if(!/const BUILD=\d+,BUILD_D=/.test(cur)||!/<title>Gesti/.test(cur)){try{await upKv('del','prog')}catch(x){}UP.msg='Ese archivo no es el programa instalado, así que no lo he tocado. Elige «Gestion de alquileres.html» de tu carpeta.';upRender();return}
+if(!h){h=await showSaveFilePicker({suggestedName:'Umbral.html',types:[{description:'Programa (HTML)',accept:{'text/html':['.html']}}]})}
+const cur=await (await h.getFile()).text();if(!/const BUILD=\d+,BUILD_D=/.test(cur)||!/<title>(Gesti|Umbral)/.test(cur)){try{await upKv('del','prog')}catch(x){}UP.msg='Ese archivo no es el programa instalado, así que no lo he tocado. Elige «Umbral.html» de tu carpeta.';upRender();return}
 const w=await h.createWritable();await w.write(txt);await w.close();
 try{await upKv('set','prog',h);if(!back)await upKv('set','prev',{t:cur,b:BUILD});else await upKv('del','prev')}catch(x){}
 try{logAdd((back?'Vuelta a la versión ':'Programa actualizado a la versión ')+nb)}catch(x){}
