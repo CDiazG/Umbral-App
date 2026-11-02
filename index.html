@@ -601,8 +601,12 @@ else{if(ya!==yy)n=Math.max(1,cntDue(t,yy*12,b));else n=Math.max(1,n-cntDue(t,b+1
 return L+'.'+yy+String(n).padStart(2,'0')}
 function shiftNo(no,d){const m=String(no).match(/^(.*?)(\d{4})(\d{2})$/);if(!m||+m[3]<1||+m[3]>12)return no;const i=+m[2]*12+ +m[3]-1+d;return m[1]+Math.floor(i/12)+String(i%12+1).padStart(2,'0')}
 const isRec=x=>x[2]===true||/\d+\/15\b/.test(x[0]);
+/*RSCH: cambios de renta programados (adendas). Se aplican al facturar el mes indicado y se revierten si se vuelve a un mes anterior sin haber tocado la renta*/
+const RSCH=[{id:'ofv_ad1',k:'RUZAFA 19|OFTALVIST 1P',c:2026*12+11,r:5364,l:'RENTA actualizada por adenda de 30/10/2026 (desde diciembre de 2026)'},{id:'ofv_ad2',k:'RUZAFA 19|OFTALVIST BYS',c:2026*12+11,r:9536,l:'RENTA actualizada por adenda de 30/10/2026 (desde diciembre de 2026)'}];
+function rsch(c){let ch=false;try{RSCH.forEach(e=>{const t=T.find(x=>x.k===e.k);if(!t)return;if(c>=e.c&&t.rs!==e.id){t.ro=t.r;t.lo=t.l;t.r=e.r;t.l=e.l;t.rs=e.id;ch=true}else if(c<e.c&&t.rs===e.id&&Math.abs(t.r-e.r)<.005){t.r=t.ro;t.l=t.lo;delete t.rs;delete t.ro;delete t.lo;ch=true}});if(ch)LSX.setItem('fl2',JSON.stringify(T))}catch(x){}return ch}
 function dt(){const c=+$('y').value*12+ +$('m').value;
-if(PYM!==null&&c!==PYM){const d=c-PYM;T.forEach(t=>{t.no=stepNo(t,PYM,c);t.x.forEach(x=>{if(isRec(x))x[0]=x[0].replace(/(\d+)\/(\d+)/,(a,n,tot)=>Math.max(1,Math.min(+n+d,+tot))+'/'+tot)})});save();if(CUR=='fac'){list();ed();fmPanel()}}
+const rc=rsch(c);
+if(PYM!==null&&c!==PYM){const d=c-PYM;T.forEach(t=>{t.no=stepNo(t,PYM,c);t.x.forEach(x=>{if(isRec(x))x[0]=x[0].replace(/(\d+)\/(\d+)/,(a,n,tot)=>Math.max(1,Math.min(+n+d,+tot))+'/'+tot)})});save();if(CUR=='fac'){list();ed();fmPanel()}}else if(rc&&CUR=='fac'){list();ed();fmPanel()}
 PYM=c;try{const n=new Date();LSX.setItem('fl_my',JSON.stringify({m:$('m').value,y:$('y').value,sd:n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate()}))}catch(x){}
 $('d').value=$('y').value+'-'+String(+$('m').value+1).padStart(2,'0')+'-01'}
 /* mes a facturar: a partir del día 25 toca preparar el mes siguiente; una elección manual solo dura ese día */
@@ -754,8 +758,8 @@ const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
 const CLAUDE_URL='';
-const BUILD=132,BUILD_D='31 oct 2026',VER='2.18.0',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12',112:'2.10.13',113:'2.10.14',114:'2.10.15',115:'2.10.16',116:'2.11.0',117:'2.11.1',118:'2.11.2',119:'2.11.3',120:'2.11.4',121:'2.12.0',122:'2.12.1',123:'2.12.2',124:'2.13.0',125:'2.14.0',126:'2.15.0',127:'2.15.1',128:'2.16.0',129:'2.16.1',130:'2.17.0',131:'2.17.1',132:'2.18.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=133,BUILD_D='2 nov 2026',VER='2.18.1',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12',112:'2.10.13',113:'2.10.14',114:'2.10.15',115:'2.10.16',116:'2.11.0',117:'2.11.1',118:'2.11.2',119:'2.11.3',120:'2.11.4',121:'2.12.0',122:'2.12.1',123:'2.12.2',124:'2.13.0',125:'2.14.0',126:'2.15.0',127:'2.15.1',128:'2.16.0',129:'2.16.1',130:'2.17.0',131:'2.17.1',132:'2.18.0',133:'2.18.1'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
