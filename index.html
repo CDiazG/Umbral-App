@@ -758,8 +758,8 @@ const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
 const CLAUDE_URL='';
-const BUILD=134,BUILD_D='3 nov 2026',VER='2.18.2',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12',112:'2.10.13',113:'2.10.14',114:'2.10.15',115:'2.10.16',116:'2.11.0',117:'2.11.1',118:'2.11.2',119:'2.11.3',120:'2.11.4',121:'2.12.0',122:'2.12.1',123:'2.12.2',124:'2.13.0',125:'2.14.0',126:'2.15.0',127:'2.15.1',128:'2.16.0',129:'2.16.1',130:'2.17.0',131:'2.17.1',132:'2.18.0',133:'2.18.1',134:'2.18.2'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=135,BUILD_D='22 nov 2026',VER='2.19.0',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12',112:'2.10.13',113:'2.10.14',114:'2.10.15',115:'2.10.16',116:'2.11.0',117:'2.11.1',118:'2.11.2',119:'2.11.3',120:'2.11.4',121:'2.12.0',122:'2.12.1',123:'2.12.2',124:'2.13.0',125:'2.14.0',126:'2.15.0',127:'2.15.1',128:'2.16.0',129:'2.16.1',130:'2.17.0',131:'2.17.1',132:'2.18.0',133:'2.18.1',134:'2.18.2',135:'2.19.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -891,7 +891,7 @@ if(CV=='y'){ttl=String(Y);body=`<div class="yg">${[...Array(12).keys()].map(m=>m
 else if(CV=='q'){ttl=Y+' – '+(Y+4);body=qView(Y,ev)}
 else{ttl=MN[CM.getMonth()]+' '+Y;body=`<div class="mg">${monthCells(by)}</div>`}
 const up=ev.filter(x=>days(x.d)>=-30),vb=(v,t)=>`<button class="${CV==v?'p':''}" onclick="cv_('${v}')">${t}</button>`;
-$('v-cal').innerHTML=`<h2>Calendario y alertas</h2><p>Actualizaciones de renta, vencimientos y tareas, según los contratos. Pasa el ratón por un día para ver el texto completo de sus avisos. Las alertas por correo y móvil siguen activas aparte.</p>
+$('v-cal').innerHTML=`<h2>Calendario y alertas</h2><p>Actualizaciones de renta, vencimientos y tareas, según los contratos. Pasa el ratón por un día para ver el texto completo de sus avisos. </p>${puHtml()}
 <div class="mh"><div class="g" style="margin:0 0 10px">${vb('m','Mes')}${vb('y','Año')}${vb('q','5 años')}<button onclick="cvHoy()">Hoy</button></div><div style="display:flex;justify-content:space-between;align-items:center"><button onclick="cm_(-1)" aria-label="Anterior">←</button><b style="text-transform:capitalize">${ttl}</b><button onclick="cm_(1)" aria-label="Siguiente">→</button></div>${body}</div>
 <h2 style="font-size:16px">Todos los avisos</h2>${up.map(evRow).join('')}
 <h2 style="font-size:16px;margin-top:18px">Añadir un aviso propio</h2><div class="nf"><div><label>Fecha</label><input type="date" id="ed_d"></div><div><label>Tipo</label><select id="ed_k"><option value="tarea">Tarea</option><option value="ipc">IPC</option><option value="renta">Renta</option><option value="fin">Contrato</option></select></div><div><label>Texto</label><input id="ed_t"></div></div><p><button class="p" onclick="addEv()">Añadir aviso</button></p>`;ceInit()}
@@ -989,7 +989,7 @@ function rAju(){const G=groups().map(g=>g[0]).filter(Boolean);
 $('v-aju').innerHTML=`<h2>Copia de seguridad y apartados</h2><p>${CL&&CL.db&&CL.state==='on'?'Tus datos ya se guardan solos en la nube (más abajo); esta copia en archivo es opcional, por si quieres tener un respaldo propio.':'Los datos viven en este navegador.'} La copia completa incluye todo: locales, inquilinos, historial, cobros, contratos añadidos, inquilinos anteriores, avisos, IPC, registro de cambios y apartados. Al cargarla, la página se recarga.</p>
 <p><button class="p" onclick="bkNow()">Guardar copia completa</button> <small>${bkInfo()}</small></p>
 <p><label>Cargar una copia</label><br><input type="file" accept=".json" onchange="rest_(this.files[0])"></p><p id="am" style="color:#47676a"></p>
-${clHtml()}${CL.kind==='fb'&&CL.db?'':syHtml()}${ghHtml()}
+${clHtml()}${puHtml()}${CL.kind==='fb'&&CL.db?'':syHtml()}${ghHtml()}
 <h2 style="margin-top:22px;font-size:17px">Apartados propios del menú</h2><p>Crea una página de notas o un acceso directo a una web (por ejemplo, la sede del Ayuntamiento o la gestoría). Aparece en el menú, en el grupo que elijas.</p>
 <div class="nf"><div><label>Título</label><input id="cp_t"></div><div><label>Grupo del menú (escribe uno nuevo si quieres)</label><input id="cp_g" list="cp_gl" value="Mis apartados"><datalist id="cp_gl">${G.map(g=>`<option value="${e(g)}">`).join('')}</datalist></div>
 <div><label>Tipo</label><select id="cp_k"><option value="nota">Notas libres</option><option value="enlace">Enlace a una web</option></select></div><div><label>Dirección web (solo para enlaces)</label><input id="cp_u" placeholder="https://"></div><div><label>Descripción</label><input id="cp_x"></div></div>
@@ -1971,7 +1971,7 @@ if(CL.done[k]!==h){for(let i=0;i<n;i++)await clTry(()=>clDoc(k,i).set({key:k,i,v
 if(o)for(let i=n;i<o.n;i++)await clTry(()=>clDoc(k,i).delete())}
 for(const k of Object.keys(old))if(!nk[k]){for(let i=0;i<old[k].n;i++)await clTry(()=>clDoc(k,i).delete());delete CL.done[k]}
 const ts=Math.max(Date.now(),(CL.rts||0)+1),hd={ts,by:CL.by,v:1,k:nk,inf:clInfo()};
-await clTry(()=>CL.db.doc('cloud/'+CO).set(hd));CL.hdr=hd;CL.done={};CL.ts=CL.rts=ts;LSX.setItem('fl_synct',String(ts));if(!CL.again)LSX.removeItem('fl_syncd');CL.state='on';okk=1}
+await clTry(()=>CL.db.doc('cloud/'+CO).set(hd));CL.hdr=hd;CL.done={};CL.ts=CL.rts=ts;LSX.setItem('fl_synct',String(ts));if(!CL.again)LSX.removeItem('fl_syncd');CL.state='on';okk=1;try{puSave()}catch(x){}}
 catch(x){CL.err=clEr(x);CL.state=(x&&x.code==='invalid_argument')?'ro':'err';if(x&&(x.code==='resource_exhausted'||x.code==='unavailable')&&CL.tries++<4){clearTimeout(CL.t);CL.t=setTimeout(clPush,6000)}}
 if(okk)CL.tries=0;CL.busy=0;clUi();if(CL.again){CL.again=0;if(CL.state==='on')CL.t=setTimeout(clPush,500)}}
 function clMark(k){if(!CL.db||CL.applying||k==='fl_rec')return;try{window.localStorage.setItem(PFX+'fl_syncd','1')}catch(x){}if(CL.busy)CL.again=1;if(CL.state==='conf'||CL.state==='newer')return;if(CL.state==='ro')return;clearTimeout(CL.t);CL.t=setTimeout(clPush,1800)}
@@ -2405,6 +2405,47 @@ if(g&&Date.now()-g<1200){const id=GK[ev.key.toLowerCase()];g=0;if(id&&(groups().
 if(ev.key.toLowerCase()==='g'){g=Date.now()}})})();
 
 (function(){const n=new Date(),sd=n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate();if(FMY0&&FMY0.sd===sd)return;const cd=mesFac(),c0=+$('y').value*12+ +$('m').value;if(c0===cd)return;$('y').value=Math.floor(cd/12);$('m').value=cd%12;dt();try{list();ed();fmPanel()}catch(x){}})();
+/* ===== Avisos en el móvil (notificaciones) =====
+   La app deja en la nube (cloud/_av_<empresa>) la lista de fechas del calendario y las facturas sin cobrar.
+   Cada mañana un proceso de GitHub (repositorio privado, .github/workflows/avisos.yml) la lee y manda la notificación. */
+const PU={busy:0,msg:''};
+function puOk(){return location.protocol==='https:'&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window}
+function puDb(){return(typeof CL!='undefined'&&CL.db)?CL.db:null}
+function puOn_(){try{return Notification.permission==='granted'&&!!localStorage.getItem('fx_push')}catch(x){return false}}
+function puSnap(){const td=iso(TODAY),lim=iso(new Date(TODAY.getFullYear()+1,TODAY.getMonth(),TODAY.getDate()+7));
+const ev=events().filter(x=>x&&x.d&&x.d>=td&&x.d<=lim).map(x=>({d:x.d,k:x.k,t:String(x.t||'').slice(0,200)}));
+const deu=Object.values(H).filter(h=>h&&!h.cob&&h.ym).map(h=>({n:String(h.n||''),no:String(h.no||''),ym:String(h.ym),tot:Math.round((+h.tot||0)*100)/100}));
+return{co:CO,n:String(CONAME||'').replace(/\s*\n\s*/g,' '),ev,deu,hoy:td,ts:Date.now()}}
+let PUH='';
+async function puSave(){const db=puDb();if(!db)return;try{const s=puSnap(),h=clHash(JSON.stringify([s.ev,s.deu,s.n,s.hoy]));if(h===PUH)return;await db.doc('cloud/_av_'+CO).set(s);PUH=h}catch(x){}}
+setTimeout(()=>{if(typeof CL!='undefined'&&CL.state==='on')puSave()},6000);
+function puB64(s){s=String(s).replace(/-/g,'+').replace(/_/g,'/');const r=atob(s+'==='.slice((s.length+3)%4));return Uint8Array.from(r,c=>c.charCodeAt(0))}
+const puDev=()=>{const u=navigator.userAgent||'';return /Android/i.test(u)?'Android':/iPhone|iPad/i.test(u)?'iPhone':/Windows/i.test(u)?'Windows':/Mac/i.test(u)?'Mac':'Otro'};
+async function puSubs(db){const sn=await db.doc('cloud/_subs').get();const d=sn.exists?sn.data():null;return d&&Array.isArray(d.l)?d.l:[]}
+async function puOn(){const db=puDb();if(!puOk())return;if(!db){PU.msg='Primero conecta la nube (Ajustes › Copia de seguridad).';puUi();return}
+PU.busy=1;PU.msg='';puUi();
+try{const vs=await db.doc('cloud/_vapid').get(),pub=vs.exists&&vs.data()&&vs.data().pub;
+if(!pub)throw new Error('Falta un paso en GitHub: guarda la clave de Firebase y pulsa «Run workflow» en «Avisos al móvil». Después vuelve a pulsar aquí.');
+const p=await Notification.requestPermission();if(p!=='granted')throw new Error('Las notificaciones están bloqueadas para Umbral. Actívalas en Chrome: ⋮ › Configuración › Configuración de sitios › Notificaciones.');
+const reg=await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;
+const key=puB64(pub);let sub=await reg.pushManager.getSubscription();
+if(sub){const k=sub.options&&sub.options.applicationServerKey;const same=k&&new Uint8Array(k).join()===key.join();if(!same){await sub.unsubscribe();sub=null}}
+if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key});
+const j=sub.toJSON();let L=(await puSubs(db)).filter(x=>x&&x.ep!==j.endpoint);L.push({ep:j.endpoint,k:j.keys,dev:puDev(),ts:Date.now()});
+await db.doc('cloud/_subs').set({l:L});localStorage.setItem('fx_push',j.endpoint);PUH='';await puSave();
+PU.msg='✔ Listo. Mañana por la mañana te llegará un aviso de confirmación (o ahora mismo, si en GitHub pulsas otra vez «Run workflow»).'}
+catch(x){PU.msg=(x&&x.message)||String(x)}PU.busy=0;puUi()}
+async function puOff(){const db=puDb();PU.busy=1;puUi();try{const reg=await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();const ep=(sub&&sub.endpoint)||localStorage.getItem('fx_push');if(sub)await sub.unsubscribe();
+if(db&&ep){const L=(await puSubs(db)).filter(x=>x&&x.ep!==ep);await db.doc('cloud/_subs').set({l:L})}localStorage.removeItem('fx_push');PU.msg='Avisos desactivados en este dispositivo.'}catch(x){PU.msg=(x&&x.message)||String(x)}PU.busy=0;puUi()}
+async function puTest(){try{const reg=await navigator.serviceWorker.ready;await reg.showNotification('Umbral · prueba',{body:'Así se verán los avisos en este dispositivo.',icon:'icon-192.png',tag:'umbral-prueba',lang:'es'})}catch(x){PU.msg='No se pudo mostrar la prueba: '+((x&&x.message)||x);puUi()}}
+function puUi(){try{if(CUR=='cal')rCal();else if(CUR=='aju')rAju()}catch(x){}}
+function puHtml(){if(location.protocol==='file:')return'';
+const qu='<p style="margin:6px 0 0;font-size:13px;color:var(--ink2)">Te avisa por la mañana los días que hay algo en el calendario (IPC, contratos, carencias, tareas y el día 25 preparar las facturas), una semana antes de cada IPC, 3 meses y 1 mes antes de que venza un contrato y, los lunes, si hay facturas con más de 30 días sin cobrar.</p>';
+const m=PU.msg?`<p style="margin:8px 0 0">${e(PU.msg)}</p>`:'';
+if(!puOk())return`<div class="mh"><b>Avisos en el móvil</b><p style="margin:6px 0 0">Este navegador no admite notificaciones. En Android, abre Umbral desde Chrome o desde el icono instalado.</p></div>`;
+if(!puDb())return`<div class="mh"><b>Avisos en el móvil</b><p style="margin:6px 0 0">Para recibir avisos, primero conecta la nube.</p>${qu}</div>`;
+const on=puOn_(),dis=PU.busy?' disabled':'';
+return`<div class="mh"><b>Avisos en el móvil</b>${on?'<p style="margin:6px 0 0" class="ok">✔ Activados en este dispositivo.</p>':''}${qu}<p style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap">${on?`<button onclick="puTest()"${dis}>Ver un aviso de prueba</button><button onclick="puOff()"${dis}>Desactivar en este dispositivo</button>`:`<button class="p" onclick="puOn()"${dis}>${PU.busy?'Activando…':'Activar avisos en este dispositivo'}</button>`}</p>${m}</div>`}
 show('ini');
 
 </script><script>if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})</script></body></html>
