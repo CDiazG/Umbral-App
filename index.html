@@ -618,7 +618,7 @@ const RSCH=[{id:'ofv_ad1',k:'RUZAFA 19|OFTALVIST 1P',c:2026*12+11,r:5364,l:'RENT
 function rsch(c){let ch=false;try{RSCH.forEach(e=>{const t=T.find(x=>x.k===e.k);if(!t)return;if(e.ta&&typeof t.t==='string'){if(c>=e.c&&t.t.includes(e.ta[0])&&!t.t.includes(e.ta[1])){t.t=t.t.replace(e.ta[0],e.ta[1]);ch=true}else if(c<e.c&&t.t.includes(e.ta[1])){t.t=t.t.replace(e.ta[1],e.ta[0]);ch=true}}if(c>=e.c&&t.rs!==e.id){t.ro=t.r;t.lo=t.l;t.r=e.r;t.l=e.l;t.rs=e.id;ch=true}else if(c<e.c&&t.rs===e.id&&Math.abs(t.r-e.r)<.005){t.r=t.ro;t.l=t.lo;delete t.rs;delete t.ro;delete t.lo;ch=true}});if(ch)LSX.setItem('fl2',JSON.stringify(T))}catch(x){}return ch}
 function dt(){const c=+$('y').value*12+ +$('m').value;
 const rc=rsch(c);
-if(PYM===null&&qSet(c,c))save();
+if(PYM===null&&qSet(c,c)){try{LSX.setItem('fl2',JSON.stringify(T))}catch(x){}}
 if(PYM!==null&&c!==PYM){T.forEach(t=>{t.no=stepNo(t,PYM,c)});qSet(c,PYM);save();if(CUR=='fac'){list();ed();fmPanel()}}else if(rc&&CUR=='fac'){list();ed();fmPanel()}
 PYM=c;try{const n=new Date();LSX.setItem('fl_my',JSON.stringify({m:$('m').value,y:$('y').value,sd:n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate()}))}catch(x){}
 $('d').value=$('y').value+'-'+String(+$('m').value+1).padStart(2,'0')+'-01'}
@@ -632,7 +632,7 @@ const pbv=v=>v=='E'||v=='N'?v:+v;
 const payOpts=t=>BK.map((b,i)=>`<option value="${i}" ${t.b===i?'selected':''}>${BKN[i]} · ${b}</option>`).join('')+`<option value="E" ${t.b==='E'?'selected':''}>Efectivo</option>`;
 function save(){try{LSX.setItem('fl2',JSON.stringify(T))}catch(e){}lvq()}
 let LVT=0;function lvq(){if(LVT)return;LVT=requestAnimationFrame(()=>{LVT=0;lv()})}
-function lv(){try{if(typeof CUR!='undefined'&&CUR!='fac')return;const t=T[S.sel];if(!t)return;const sc=3,cv=document.createElement('canvas');cv.width=210*sc;cv.height=297*sc;const c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,cv.width,cv.height);draw(new Pv(c,sc),t);$('lv').replaceChildren(Object.assign(document.createElement('small'),{textContent:'Vista previa en directo'}),cv)}catch(x){}}
+function lv(){try{if(typeof CUR!='undefined'&&CUR!='fac')return;const t0=T[S.sel];if(!t0)return;const hG=gen1(t0);if(hG&&!hG.sn){$('lv').replaceChildren(Object.assign(document.createElement('small'),{textContent:'Factura generada antes de que Umbral guardara copia: el PDF original está en el pendrive.'}));return}const t=hG?hG.sn:t0;const sc=3,cv=document.createElement('canvas');cv.width=210*sc;cv.height=297*sc;const c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,cv.width,cv.height);draw(new Pv(c,sc),t);$('lv').replaceChildren(Object.assign(document.createElement('small'),{textContent:hG?'🔒 Factura generada (copia fija)':'Vista previa en directo'}),cv)}catch(x){}}
 let LQ='';
 const lqN=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/s\.?l\.?u?\.?\b/g,' ').replace(/[^a-z0-9 ]/g,' ').replace(/\bx(?=[a-z])/g,'j').replace(/ss/g,'z').replace(/\s+/g,' ').trim();
 const LQSTOP=new Set(['calle','c','plaza','pl','paseo','pso','avenida','av','de','del','la','el','los','las','y','sl','sa','local','n','no','num','numero']);
@@ -644,10 +644,10 @@ for(const [w] of toks){if(LQSTOP.has(w)&&toks.length>1)continue;let best=0;for(c
 return tot}
 function lqRank(){return T.map((t,i)=>({i,s:lqScore(t,LQ)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s||a.i-b.i)}
 function lqGo(){const r=lqRank();if(!r.length)return;fcOne(r[0].i)}
-function list(){const rk=fcFilt(LQ.trim()?lqRank().map(x=>x.i):T.map((t,i)=>i)),li=$('lqi');try{fcSum()}catch(x){}if(li)li.textContent=LQ.trim()?(rk.length?rk.length+(rk.length==1?' resultado':' resultados')+' · Intro abre el primero':'Ningún local coincide'):'';$('list').innerHTML=rk.map(i=>{const t=T[i];return `<div class="r ${i==S.sel?'a':''}" ${car(t)?'style="opacity:.6" ':''}onclick="fcOne(${i})"><input type=checkbox ${t.on?'checked':''} onclick="event.stopPropagation();T[${i}].on=this.checked;save()"><span>${e(t.n)}<small>${e(locOf(t))} · ${t.no||'sin nº'}${car(t)?' · <b class=wn2>Sin cobrar hasta '+scTxt(t)+'</b>':due(t)?'':' · no toca este mes'}${gen1(t)?' · <b class=ok>✔ ya generada</b>':''}</small></span><b>${car(t)?'—':f(calc(t).tot)}</b></div>`}).join('')||'<p style="margin:8px 2px;color:var(--ink2)">Ningún local en este filtro.</p>'}
+function list(){const rk=fcFilt(LQ.trim()?lqRank().map(x=>x.i):T.map((t,i)=>i)),li=$('lqi');try{fcSum()}catch(x){}if(li)li.textContent=LQ.trim()?(rk.length?rk.length+(rk.length==1?' resultado':' resultados')+' · Intro abre el primero':'Ningún local coincide'):'';$('list').innerHTML=rk.map(i=>{const t=T[i];return `<div class="r ${i==S.sel?'a':''}" ${car(t)?'style="opacity:.6" ':''}onclick="fcOne(${i})"><input type=checkbox ${t.on?'checked':''} onclick="event.stopPropagation();T[${i}].on=this.checked;save()"><span>${e(t.n)}<small>${e(locOf(t))} · ${t.no||'sin nº'}${car(t)?' · <b class=wn2>Sin cobrar hasta '+scTxt(t)+'</b>':due(t)?'':' · no toca este mes'}${gen1(t)?' · <b class=ok>✔ ya generada</b>':''}</small></span><b>${gen1(t)?f(gen1(t).tot):car(t)?'—':f(calc(t).tot)}</b></div>`}).join('')||'<p style="margin:8px 2px;color:var(--ink2)">Ningún local en este filtro.</p>'}
 function tot(){const t=T[S.sel];if(!t||!$('tt'))return;const c=calc(t);$('tt').innerHTML=`<div>Base imponible: ${f(c.base)}</div><div>IVA 21%: +${f(c.iva)}</div><div>IRPF 19%: -${f(c.irpf)}</div><div><b>Total a pagar: ${f(c.tot)}</b></div>`}
 function up(){list();tot();save()}
-function ed(){const t=T[S.sel];if(t){try{recAdd(t.k);renderRecs()}catch(x){}}if(!t){$('ed').innerHTML='<h3 style="margin:0">Todavía no hay locales</h3><p>Esta empresa está vacía. Añade el primer local para empezar a facturar.</p><button class=p onclick="nw()">+ Añadir local</button>';return}$('ed').innerHTML=`<div class="fm"><div class="fm-bar"><button type="button" class="fm-back" onclick="fcBack()">← Locales</button>${fcNavHtml()}<span class="fm-mes">${MES[+$('m').value]} ${$('y').value}</span></div>
+function ed(){const t=T[S.sel];if(t){try{recAdd(t.k);renderRecs()}catch(x){}}if(!t){$('ed').innerHTML='<h3 style="margin:0">Todavía no hay locales</h3><p>Esta empresa está vacía. Añade el primer local para empezar a facturar.</p><button class=p onclick="nw()">+ Añadir local</button>';return}{const hG=gen1(t);if(hG){edLock(t,hG);return}}$('ed').innerHTML=`<div class="fm"><div class="fm-bar"><button type="button" class="fm-back" onclick="fcBack()">← Locales</button>${fcNavHtml()}<span class="fm-mes">${MES[+$('m').value]} ${$('y').value}</span></div>
 <h3 style="margin:6px 0 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap">${e(t.n)} <button type="button" onclick="verPan(S.sel)" title="Gráficos y datos de este inquilino" style="font-size:12px;padding:4px 10px;min-height:28px">📊 Panel</button></h3>
 <div class="fm-sub">${e(locOf(t))} · ${t.no||'sin nº'}${car(t)?' · <b class=wn2>Sin cobrar hasta '+scTxt(t)+'</b>':due(t)?'':' · <b class=wn2>no toca este mes</b>'}${gen1(t)?' · <b class=ok>✔ ya generada</b>':''}</div>
 <div class="fm-r">Renta ${t.q?'reducida':'del contrato'}: <b>${f(t.q?t.red:t.r)}</b></div>
@@ -676,6 +676,17 @@ ${(t.fr||'M')!='M'?`<label>Primer mes de facturación (después se repite cada $
 <label>Texto de la renta</label><input value="${e(t.l)}" oninput="T[S.sel].l=this.value;save()">
 <label>Renta (€)</label><input type=number step=.01 value="${t.r}" oninput="T[S.sel].r=+this.value;up()">
 </div></details>`;tot();lv();nck();fcIpcInit(t);if(S.fx){const q=S.fx;S.fx=null;const el=$((q[1]=='a'?'fxa':'fxl')+q[0]);if(el){el.focus();try{el.select()}catch(x){}}}fcLay()}
+/* Factura ya generada: solo lectura, con lo que se emitió */
+function edLock(t,h){const sn=h.sn,mes=MES[+$('m').value]+' '+$('y').value;
+const rows=sn?[[(sn.l||'RENTA'),sn.q?sn.red:sn.r]].concat(sn.x.map(x=>[x[0],x[1]])):[];
+$('ed').innerHTML=`<div class="fm"><div class="fm-bar"><button type="button" class="fm-back" onclick="fcBack()">← Locales</button>${fcNavHtml()}<span class="fm-mes">${mes}</span></div>
+<h3 style="margin:6px 0 0">${e((sn||t).n)}</h3>
+<div class="fm-sub">${e(locOf(sn||t))} · Nº <b>${e(h.no||'—')}</b> · <b class=ok>✔ generada${h.gen?' el '+(()=>{try{return fd(h.gen)}catch(x){return h.gen}})():''}</b> · ${h.cob?'cobrada':'pendiente de cobro'}</div>
+<div class="mh" style="margin:10px 0;background:#eef5f5;border:1px solid #c9dede;border-radius:6px;padding:10px 12px">🔒 <b>Esta factura ya está generada y no se puede modificar.</b> Lo que ves es lo que se facturó. Los cambios para los meses siguientes se hacen yendo a ese mes.</div>
+${sn?`<div class="tbw"><table class="tb" style="min-width:0;width:100%"><tr><th>Concepto</th><th style="text-align:right">Importe</th></tr>${rows.map(r=>`<tr><td>${e(r[0])}</td><td style="text-align:right;white-space:nowrap">${f(r[1])}</td></tr>`).join('')}</table></div>`:`<p class="wn2" style="margin:6px 0">Esta factura se generó antes de que Umbral guardara una copia, así que solo tiene los importes. El PDF original está en la carpeta del inquilino del pendrive.</p>`}
+<div class=t><div>Base imponible: ${f(h.base)}</div><div>IVA 21%: +${f(h.iva)}</div><div>IRPF 19%: -${f(h.irpf)}</div><div><b>Total a pagar: ${f(h.tot)}</b></div></div>
+<div class="g fm-g">${sn?`<button onclick="pvw(S.sel)">Ver la factura</button><button class=p onclick="dlCopy(S.sel)">Descargar copia del PDF</button>`:''}${fcNextBtn()}${fcPendBtn()}</div></div>`;lv();try{fcLay()}catch(x){}}
+async function dlCopy(i){const h=gen1(T[i]);if(!h||!h.sn)return;const d=new jspdf.jsPDF();draw(d,h.sn);await sv(d,String(h.no||'factura').replace(/[^\w.-]/g,'_')+'.pdf')}
 /* Facturas del mes: filtros, siguiente pendiente y resumen */
 let FF='all';
 const fcSt=t=>!t.on||!inc(t)?'no':gen1(t)?'gen':'pen';
@@ -757,7 +768,7 @@ document.body.appendChild(o);$('dpc').onclick=()=>o.remove();if(go)$('dpg').oncl
 o.querySelectorAll('[data-an]').forEach(b=>b.onclick=()=>{const x=items[+b.dataset.an],k=YM()+'|'+x[0].k;if(!confirm('¿Anular el registro de la factura '+(x[1].no||'')+' de '+x[0].n+' ('+mes+')?\n\nHazlo solo si fue una prueba o si no se envió. Después podrás generarla de nuevo.'))return;
 delete H[k];sh();try{logAdd('Anulado el registro de la factura '+(x[1].no||'')+' de '+x[0].n+' ('+mes+')')}catch(e_){}o.remove();list();if(CUR=='cob')rCob();alert('Registro anulado. Ya puedes volver a generarla.')})}
 function one(){const t=T[S.sel],h=t&&gen1(t);if(h){dupModal([[t,h]]);return}guard([t],oneGo,'generar la factura')}
-function pvw(i){guard([T[i]],()=>prevPdf(T[i],()=>{S.sel=i;oneGo()}),'enseñar la factura')}
+function pvw(i){const hG=gen1(T[i]);if(hG&&hG.sn){prevPdf(hG.sn,()=>dlCopy(i));return}guard([T[i]],()=>prevPdf(T[i],()=>{S.sel=i;oneGo()}),'enseñar la factura')}
 async function oneGo(){const t=T[S.sel],h0=gen1(t);if(h0){dupModal([[t,h0]]);return}reg(t);const d=new jspdf.jsPDF();draw(d,t);await sv(d,t.no.replace(/[^\w.-]/g,'_')+'.pdf')}
 function all_(){const s=T.filter(inc),dup=s.filter(t=>gen1(t)),rest=s.filter(t=>!gen1(t));if(dup.length){dupModal(dup.map(t=>[t,gen1(t)]),rest.length?()=>guard(rest,()=>allGo(rest),'generar las facturas'):null,rest.length);return}guard(s,allGo,'generar las facturas')}
 async function allGo(s0){const s=(Array.isArray(s0)?s0:T.filter(inc)).filter(t=>!gen1(t));if(!s.length){alert('No hay facturas pendientes de generar este mes.');return}const d=new jspdf.jsPDF();s.forEach((t,i)=>{reg(t);if(i)d.addPage();draw(d,t)});await sv(d,'facturas_'+MES[+$('m').value]+'_'+$('y').value+'.pdf')}
@@ -771,8 +782,8 @@ const VIEWS={emp:()=>rEmp(),gra:()=>rGra(),pen:()=>rPen(),map:()=>rMap(),reg:()=
 let CUR='ini';
 function groups(){const G=MENU.map(g=>[g[0],g[1].filter(v=>!['pen','map'].includes(v[0]))]);CP.forEach(c=>{let g=G.find(x=>x[0]==c.g);if(!g){g=[c.g||'Mis apartados',[]];G.push(g)}g[1].push([c.id,c.t])});return G}
 const CLAUDE_URL='';
-const BUILD=138,BUILD_D='24 nov 2026',VER='2.19.3',OFFL=location.protocol==='file:';
-const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12',112:'2.10.13',113:'2.10.14',114:'2.10.15',115:'2.10.16',116:'2.11.0',117:'2.11.1',118:'2.11.2',119:'2.11.3',120:'2.11.4',121:'2.12.0',122:'2.12.1',123:'2.12.2',124:'2.13.0',125:'2.14.0',126:'2.15.0',127:'2.15.1',128:'2.16.0',129:'2.16.1',130:'2.17.0',131:'2.17.1',132:'2.18.0',133:'2.18.1',134:'2.18.2',135:'2.19.0',136:'2.19.1',137:'2.19.2',138:'2.19.3'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
+const BUILD=139,BUILD_D='24 nov 2026',VER='2.20.0',OFFL=location.protocol==='file:';
+const VMAP={85:'2.0.0',86:'2.1.0',87:'2.1.1',88:'2.1.2',89:'2.2.0',90:'2.3.0',91:'2.4.0',92:'2.5.0',93:'2.5.1',94:'2.6.0',95:'2.7.0',96:'2.7.1',97:'2.8.0',98:'2.9.0',99:'2.10.0',100:'2.10.1',101:'2.10.2',102:'2.10.3',103:'2.10.4',104:'2.10.5',105:'2.10.6',106:'2.10.7',107:'2.10.8',108:'2.10.9',109:'2.10.10',110:'2.10.11',111:'2.10.12',112:'2.10.13',113:'2.10.14',114:'2.10.15',115:'2.10.16',116:'2.11.0',117:'2.11.1',118:'2.11.2',119:'2.11.3',120:'2.11.4',121:'2.12.0',122:'2.12.1',123:'2.12.2',124:'2.13.0',125:'2.14.0',126:'2.15.0',127:'2.15.1',128:'2.16.0',129:'2.16.1',130:'2.17.0',131:'2.17.1',132:'2.18.0',133:'2.18.1',134:'2.18.2',135:'2.19.0',136:'2.19.1',137:'2.19.2',138:'2.19.3',139:'2.20.0'},vf=(b,v)=>{if(v)VMAP[b]=v;return VMAP[b]||('compilación '+b)};
 (function(){const m=document.getElementById('modo');if(m){m.textContent=OFFL?'Archivo sin conexión · v'+VER:'En línea · v'+VER;window.__modoBase=m.textContent;m.title=OFFL?'Versión de escritorio':'Versión en línea'}})();
 (function(){let d=null;document.addEventListener('mousedown',ev=>{const w=ev.target.closest&&ev.target.closest('.tbw');if(!w||ev.button!==0||ev.target.closest('input,select,textarea,button,a,label'))return;d={w,x:ev.clientX,y:ev.clientY,l:w.scrollLeft,t:w.scrollTop,m:0}});
 document.addEventListener('mousemove',ev=>{if(!d)return;const dx=ev.clientX-d.x,dy=ev.clientY-d.y;if(!d.m&&Math.abs(dx)+Math.abs(dy)<4)return;d.m=1;d.w.style.cursor='grabbing';d.w.style.userSelect='none';d.w.scrollLeft=d.l-dx;d.w.scrollTop=d.t-dy});
@@ -1017,7 +1028,9 @@ S.sel=0;save();buildMenu();$('am').textContent='Copia cargada: '+T.length+' loca
 /* ===== Historial, cobros, alertas, IPC, correos, resumen ===== */
 const sh=()=>{try{LSX.setItem('fl_h',JSON.stringify(H))}catch(x){}};
 const YM=()=>$('y').value+String(+$('m').value+1).padStart(2,'0');
-function reg(t){const c=calc(t),k=YM()+'|'+t.k,o=H[k]||{};const nuevo=!o.gen;H[k]={ym:YM(),k:t.k,no:t.no,n:t.n,base:c.base,iva:c.iva,irpf:c.irpf,tot:c.tot,b:t.b,env:!!o.env,fe:o.fe||'',cob:!!o.cob,fc:o.fc||'',gen:o.gen||iso(TODAY)};if(nuevo)actH(H[k],'Factura generada',t.no+' · '+f(c.tot));sh()}
+/*Copia fija de la factura al generarla: los meses ya generados se ven tal cual se emitieron y no se pueden tocar*/
+const snap=t=>{const s=JSON.parse(JSON.stringify(t));s.date=t.date||$('d').value;return s};
+function reg(t){const c=calc(t),k=YM()+'|'+t.k,o=H[k]||{};const nuevo=!o.gen;H[k]={sn:o.sn||snap(t),ym:YM(),k:t.k,no:t.no,n:t.n,base:c.base,iva:c.iva,irpf:c.irpf,tot:c.tot,b:t.b,env:!!o.env,fe:o.fe||'',cob:!!o.cob,fc:o.fc||'',gen:o.gen||iso(TODAY)};if(nuevo)actH(H[k],'Factura generada',t.no+' · '+f(c.tot));sh()}
 const pend=()=>Object.values(H).filter(h=>!h.cob).reduce((a,h)=>a+h.tot,0);
 const ymL=y=>MN[+y.slice(4)-1]+' '+y.slice(0,4);
 const EM=BASE.EM||{};
@@ -1207,7 +1220,7 @@ return A}
 function gAv(){const el=$('g_av');if(!el)return;const A=avisos(),w=A.filter(x=>x[0]=='w').length;
 el.innerHTML=`<details class="fmav"><summary><b>Avisos de ${MES[+$('m').value].toLowerCase()}</b> <small style="color:#47676a">· ${w?'⚠️ '+w+' importantes':A.length?A.length+' informativos':'sin avisos'}</small></summary>${A.length?A.map(x=>`<div class="av ${x[0]}">${x[0]=='w'?'⚠️':'ℹ️'} ${x[1]}</div>`).join(''):'<p style="margin:6px 0 0">Nada que avisar este mes.</p>'}</details>`}
 let GS={sel:null,amt:{},rec:false};
-function gAct(){return T.map((t,i)=>i).filter(i=>inc(T[i]))}
+function gAct(){return T.map((t,i)=>i).filter(i=>inc(T[i])&&!gen1(T[i]))}
 function gm(){$('m').value=$('g_m').value;$('y').value=$('g_y').value;dt();rGen()}
 function gPuntuales(b){if(b.dataset.s!='1'){b.dataset.s='1';b.textContent='¿Seguro? Pulsa otra vez';return}T.forEach(t=>t.x=t.x.filter(isRec));save();if($('g_x'))rGen();else{list();if(S.sel!=null&&T[S.sel])ed();fmPanel()}}
 function gAll(v){GS.sel=v?gAct():[];document.querySelectorAll('input[data-gs]').forEach(c=>c.checked=v)}
